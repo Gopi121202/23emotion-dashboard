@@ -1,4 +1,3 @@
-# streamlit_app.py
 import streamlit as st
 import cv2
 import numpy as np
@@ -7,8 +6,9 @@ from datetime import datetime
 import os
 import pandas as pd
 from tensorflow.keras.models import load_model
-from io import BytesIO  # For download fix
 import base64
+
+# ======== BACKGROUND IMAGE SETUP ==========
 def set_bg_image(image_file):
     with open(image_file, "rb") as f:
         data = f.read()
@@ -26,10 +26,9 @@ def set_bg_image(image_file):
     """
     st.markdown(page_bg, unsafe_allow_html=True)
 
-import base64
-set_bg_image("background.jpg")  # Call the function early in your script
+set_bg_image("background.jpg")
 
-# Style for popup login box
+# ======== LOGIN BOX CSS ==========
 st.markdown("""
     <style>
     .login-box {
@@ -43,24 +42,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Load model and labels
+# ======== SESSION STATE SETUP ==========
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
+if "student_name" not in st.session_state:
+    st.session_state.student_name = ""
+if "student_id" not in st.session_state:
+    st.session_state.student_id = ""
+
+# ======== LOAD MODELS & SETUP ========
 model = load_model("model/model.keras")
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
-
-# Ensure folders exist
+face_cascade = cv2.CascadeClassifier("haarcascade.xml")
 os.makedirs("data/captured", exist_ok=True)
 log_path = "data/emotion_log.csv"
 
-# Load Haar cascade for face detection
-face_cascade = cv2.CascadeClassifier("haarcascade.xml")
-
-st.title("📊 Student Emotion Monitoring Dashboard")
-
+# ======== LOGIN PAGE ==========
 def login_page():
     st.title("🎓 Student Login")
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Highlight box
     with st.container():
         st.markdown('<div class="login-box">', unsafe_allow_html=True)
 
@@ -77,84 +78,66 @@ def login_page():
                 st.success("Login successful!")
 
         st.markdown('</div>', unsafe_allow_html=True)
-# Step 1: Student form
-with st.form("student_form"):
-    student_name = st.text_input("Enter Student Name")
-    student_id = st.text_input("Enter Student ID")
-    submit = st.form_submit_button("Login")
 
-# Store in session state
-if submit:
-    st.session_state["student_name"] = student_name
-    st.session_state["student_id"] = student_id
+# ======== LIVE VIDEO EMOTION DETECTION ==========
+def capture_video_emotions():
+    st.subheader("🎥 Live Emotion Detection")
+    run = st.checkbox('Start Webcam')
+    FRAME_WINDOW = st.image([])
 
-# Step 2: Webcam & Prediction
-if "student_name" in st.session_state and "student_id" in st.session_state:
-    st.header(f"Welcome, {st.session_state['student_name']}")
-    camera_image = st.camera_input("📸 Take a picture")
+    cap = None
 
-    if camera_image is not None:
-        st.success("Image captured successfully!")
+    if run:
+        cap = cv2.VideoCapture(0)
+        while run:
+            ret, frame = cap.read()
+            if not ret:
+                st.warning("Failed to grab frame")
+                break
 
-        # Convert to grayscale
-        img = Image.open(camera_image).convert("L")
-        gray = np.array(img)
+            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.1, 5)
 
-        # Detect face
-        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-        predicted_emotion = "Unknown"
+            for (x, y, w, h) in faces:
+                roi = gray[y:y+h, x:x+w]
+                roi_resized = cv2.resize(roi, (48, 48)) / 255.0
+                roi_reshaped = roi_resized.reshape(1, 48, 48, 1)
 
-        if len(faces) > 0:
-            (x, y, w, h) = faces[0]
-            face = gray[y:y + h, x:x + w]
-            face = cv2.resize(face, (48, 48)) / 255.0
-            face = np.expand_dims(face, axis=-1)
-            face = np.expand_dims(face, axis=0)
+                prediction = model.predict(roi_reshaped)
+                emotion = emotion_labels[np.argmax(prediction)]
 
-            prediction = model.predict(face)
-            emotion_idx = np.argmax(prediction)
-            predicted_emotion = emotion_labels[emotion_idx]
+                # Draw rectangle and label
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+                cv2.putText(frame, emotion, (x, y-10),
+                            cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
 
-        # Save captured image
-        img_path = f"data/captured/{st.session_state['student_name']}_{st.session_state['student_id']}.jpg"
-        with open(img_path, "wb") as f:
-            f.write(camera_image.getbuffer())
+                # Log data (one entry per detection session)
+                timestamp = datetime.now().isoformat()
+                log_entry = pd.DataFrame([[timestamp, st.session_state.student_name, st.session_state.student_id, emotion]],
+                                          columns=["Timestamp", "Name", "ID", "Emotion"])
+                if os.path.exists(log_path):
+                    log_entry.to_csv(log_path, mode="a", header=False, index=False)
+                else:
+                    log_entry.to_csv(log_path, index=False)
 
-        # Save log
-        with open(log_path, "a") as f:
-            f.write(f"{datetime.now().isoformat()},{st.session_state['student_name']},{st.session_state['student_id']},{predicted_emotion}\n")
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            FRAME_WINDOW.image(frame)
 
-        # Display result
-        st.subheader(f"Prediction: {predicted_emotion}")
-        st.image(camera_image, caption=f"{st.session_state['student_name']} - {predicted_emotion}", width=300)
+        cap.release()
 
-        # Emotion suggestions
-        if predicted_emotion == "Sad":
-            st.warning("The student seems sad. Consider the following improvements:")
-            st.markdown("- Offer personal support or mentorship")
-            st.markdown("- Encourage breaks or lighter activities")
-            st.markdown("- Provide positive feedback or recognition")
+# ======== MAIN PAGE ==========
+def main_page():
+    st.title(f"Welcome, {st.session_state.student_name} 👋")
+    capture_video_emotions()
+    if st.button("Logout"):
+        st.session_state.logged_in = False
 
-        # Fixed download button
-        buffered = BytesIO(camera_image.getbuffer())
-        st.download_button(
-            label="Download Captured Image",
-            data=buffered,
-            file_name=f"{st.session_state['student_name']}_{st.session_state['student_id']}.jpg",
-            mime="image/jpeg")
-        # Emotion history plots
-        if os.path.exists("data/emotion_log.csv"):
-            df = pd.read_csv("data/emotion_log.csv", names=["Time", "Name", "ID", "Emotion"], parse_dates=["Time"])
-            st.write(df)
-            student_df = df[df["ID"] == student_id]  # Define student_df here
-            st.subheader("📈 Emotion Trend for Student")
-            if not student_df.empty:
-                st.line_chart(student_df["Emotion"].value_counts())
-            else:
-                st.info("No previous emotion data found for this student.")
+# ======== ROUTING ==========
+if not st.session_state.logged_in:
+    login_page()
+else:
+    main_page()
 
-            st.subheader("📊 Overall Emotion Distribution")
-            st.bar_chart(df["Emotion"].value_counts())
 
 
 
