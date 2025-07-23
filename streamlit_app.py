@@ -8,7 +8,26 @@ import os
 import pandas as pd
 from tensorflow.keras.models import load_model
 from io import BytesIO  # For download fix
+import base64
+def set_bg_image(image_file):
+    with open(image_file, "rb") as f:
+        data = f.read()
+    encoded = base64.b64encode(data).decode()
+    page_bg = f"""
+    <style>
+    .stApp {{
+        background-image: url("data:image/jpg;base64,{encoded}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+    }}
+    </style>
+    """
+    st.markdown(page_bg, unsafe_allow_html=True)
 
+import base64
+set_bg_image("background.jpg")  # Call the function early in your script
 # Load model and labels
 model = load_model("model/model.keras")
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
