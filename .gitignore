@@ -1,0 +1,7 @@
+__pycache__/
+*.h5
+*.jpg
+*.jpeg
+*.png
+*.csv
+data/
