@@ -59,7 +59,7 @@ log_path = "data/emotion_log.csv"
 
 # ======== LOGIN PAGE ==========
 def login_page():
-    st.title("🎓 Student Login")
+    st.title("LOGIN")
     st.markdown("<br>", unsafe_allow_html=True)
 
     with st.container():
