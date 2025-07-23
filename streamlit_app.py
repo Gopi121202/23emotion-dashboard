@@ -28,6 +28,21 @@ def set_bg_image(image_file):
 
 import base64
 set_bg_image("background.jpg")  # Call the function early in your script
+
+# Style for popup login box
+st.markdown("""
+    <style>
+    .login-box {
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 2rem;
+        border-radius: 10px;
+        max-width: 400px;
+        margin: auto;
+        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Load model and labels
 model = load_model("model/model.keras")
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
@@ -41,6 +56,27 @@ face_cascade = cv2.CascadeClassifier("haarcascade.xml")
 
 st.title("📊 Student Emotion Monitoring Dashboard")
 
+def login_page():
+    st.title("🎓 Student Login")
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # Highlight box
+    with st.container():
+        st.markdown('<div class="login-box">', unsafe_allow_html=True)
+
+        name = st.text_input("Enter your Name")
+        sid = st.text_input("Enter your ID")
+
+        if st.button("Login"):
+            if name.strip() == "" or sid.strip() == "":
+                st.warning("Please enter both name and ID.")
+            else:
+                st.session_state.student_name = name
+                st.session_state.student_id = sid
+                st.session_state.logged_in = True
+                st.success("Login successful!")
+
+        st.markdown('</div>', unsafe_allow_html=True)
 # Step 1: Student form
 with st.form("student_form"):
     student_name = st.text_input("Enter Student Name")
