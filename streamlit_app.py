@@ -36,15 +36,12 @@ def set_blurred_bg(image_path):
         }}
         </style>
     ''', unsafe_allow_html=True)
-
-# Right-aligned login layout
 def login_screen():
     st.markdown("""
     <style>
     .login-container {
         display: flex;
         height: 100vh;
-        overflow: hidden;
     }
     .left {
         flex: 1;
@@ -68,48 +65,35 @@ def login_screen():
         border-radius: 10px;
         text-align: center;
     }
-    .login-box input {
-        margin-top: 10px;
+    input, .stTextInput > div > input {
+        background-color: white;
+        color: black;
         padding: 10px;
         border-radius: 5px;
         width: 100%;
-        border: none;
-    }
-    .login-box button {
-        margin-top: 15px;
-        padding: 10px;
-        background-color: #ffffff;
-        color: #00274d;
-        font-weight: bold;
-        width: 100%;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
     }
     </style>
     <div class="login-container">
         <div class="left"></div>
         <div class="right">
             <div class="login-box">
-                <h2>🔐 STUDENT LOGIN</h2>
-                <form action="#" method="post">
-                    <input type="text" id="name_input" name="name" placeholder="Enter your Name">
-                    <input type="text" id="sid_input" name="sid" placeholder="Enter your ID">
-                    <button type="submit">LOGIN</button>
-                </form>
-            </div>
-        </div>
-    </div>
     """, unsafe_allow_html=True)
 
-    name = st.experimental_get_query_params().get("name_input", [""])[0]
-    sid = st.experimental_get_query_params().get("sid_input", [""])[0]
+    st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
+    name = st.text_input("Enter your Name")
+    sid = st.text_input("Enter your ID")
+    login_btn = st.button("LOGIN")
 
-    if name.strip() and sid.strip():
-        st.session_state.logged_in = True
-        st.session_state.name = name
-        st.session_state.sid = sid
-        st.experimental_rerun()
+    st.markdown("</div></div></div>", unsafe_allow_html=True)
+
+    if login_btn:
+        if name.strip() and sid.strip():
+            st.session_state.logged_in = True
+            st.session_state.name = name
+            st.session_state.sid = sid
+            st.experimental_rerun()
+        else:
+            st.warning("Please enter both name and ID.")
 
 # Navigation popup
 def nav_bar():
