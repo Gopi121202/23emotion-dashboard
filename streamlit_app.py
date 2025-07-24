@@ -89,7 +89,7 @@ def login_screen():
     </style>
     <div class="login-container">
         <div class="left"></div>
-        <div class="right">
+        <div class="center">
             <div class="login-box">
                 <h2>🔐 STUDENT LOGIN</h2>
                 <form action="#">
