@@ -61,7 +61,7 @@ def nav_bar():
         background-color: #006d77;
         overflow: hidden;
         display: flex;
-        justify-content: center;
+        justify-content: left;
         padding: 10px 0;
     }
     .navbar a {
