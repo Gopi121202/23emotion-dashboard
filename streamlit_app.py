@@ -60,44 +60,26 @@ def login_screen():
 # Navigation taskbar
 
 def nav_bar():
-    st.markdown("""
-    <style>
-    .topnav {
-        background-color: #006d77;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        gap: 40px;
-        padding: 12px;
-    }
-    .topnav a {
-        color: white;
-        font-size: 16px;
-        font-weight: bold;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        text-transform: uppercase;
-    }
-    .topnav a:hover {
-        background-color: #004c52;
-        color: white;
-        border-radius: 5px;
-    }
-    </style>
-    <div class="topnav">
-        <a href="?page=Emotion Capture">Emotion Capture</a>
-        <a href="?page=Dashboard">Dashboard</a>
-        <a href="?page=Data Log">Data Log</a>
-        <a href="?page=Logout">Logout</a>
-    </div>
-    """, unsafe_allow_html=True)
+    selected = st.session_state.get("page", "Emotion Capture")
 
-    # This part syncs the page with the selected query param
-    query_params = st.experimental_get_query_params()
-    nav_page = query_params.get("page", [st.session_state.get("page", "Emotion Capture")])[0]
-    st.session_state.page = nav_page
-    return nav_page
+    col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
+    with col1:
+        if st.button("EMOTION CAPTURE"):
+            st.session_state.page = "Emotion Capture"
+    with col2:
+        if st.button("DASHBOARD"):
+            st.session_state.page = "Dashboard"
+    with col3:
+        if st.button("DATA LOG"):
+            st.session_state.page = "Data Log"
+    with col4:
+        if st.button("LOGOUT"):
+            st.session_state.logged_in = False
+            st.session_state.page = "Emotion Capture"
+            st.success("You have been logged out.")
+            st.experimental_rerun()
+
+    return st.session_state.page
 # Emotion Detection
 
 def detect_emotion():
@@ -171,13 +153,11 @@ def show_log():
     else:
         st.info("No logs found.")
 
-# Main routing logic
+#Main routing logic
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
-    query_params = st.experimental_get_query_params()
-    page = query_params.get("page", [st.session_state.get("page", "Emotion Capture")])[0]
-    st.session_state.page = page
-
+if 'page' not in st.session_state:
+    st.session_state.page = "Emotion Capture"
 
 if not st.session_state.logged_in:
     login_screen()
@@ -192,9 +172,3 @@ else:
             show_dashboard()
         elif page == "Data Log":
             show_log()
-        elif page == "Logout":
-            st.session_state.logged_in = False
-            st.session_state.page = "Emotion Capture"
-            st.success("You have been logged out.")
-            st.experimental_set_query_params(page="Emotion Capture")
-            st.experimental_rerun()
