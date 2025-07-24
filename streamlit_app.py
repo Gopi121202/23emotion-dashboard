@@ -78,7 +78,7 @@ def login_screen():
         <div class="login-box">
     """, unsafe_allow_html=True)
 
-    st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
+    st.markdown("### STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN")
@@ -117,7 +117,7 @@ def nav_bar():
 
 # Emotion Detection
 def detect_emotion():
-    st.subheader("📷 Capture Image")
+    st.subheader("CAPTURE IMAGE")
     image = st.camera_input("Take a picture")
 
     if image:
@@ -137,7 +137,7 @@ def detect_emotion():
             st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
 
             if emotion in ['Angry', 'Sad', 'Disgust']:
-                st.error(f"⚠️ Alert: {emotion} emotion detected.")
+                st.error(f"⚠️ ALERT: {emotion} emotion detected.")
 
             timestamp = datetime.now().isoformat()
             entry = pd.DataFrame([[timestamp, st.session_state.name, st.session_state.sid, emotion]],
@@ -152,7 +152,7 @@ def detect_emotion():
 
 # Dashboard
 def show_dashboard():
-    st.subheader("📊 Emotion Dashboard")
+    st.subheader("EMOTION DASHBOARD")
     if os.path.exists(log_path):
         df = pd.read_csv(log_path)
         st.bar_chart(df['Emotion'].value_counts())
@@ -172,7 +172,7 @@ def show_dashboard():
 
 # Data Log
 def show_log():
-    st.subheader("📄 Logged Emotion Data")
+    st.subheader("LOGGED EMOTION DATA")
     if os.path.exists(log_path):
         df = pd.read_csv(log_path)
         st.dataframe(df)
@@ -186,7 +186,7 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_plain_bg("background.jpg")
+    set_plain_bg("background.png")
     page = nav_bar()
     with st.container():
         if page == "Dashboard":
