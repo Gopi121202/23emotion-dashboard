@@ -59,12 +59,6 @@ def login_screen():
 # Navigation taskbar
 
 def nav_bar():
-    page = st.selectbox("Navigation", ["Emotion Capture", "Dashboard", "Data Log", "Logout"], 
-                        index=["Emotion Capture", "Dashboard", "Data Log", "Logout"].index(
-                            st.session_state.get("page", "Emotion Capture")
-                        ))
-    st.session_state.page = page
-    return page
     st.markdown("""
     <style>
     .navbar {
