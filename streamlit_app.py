@@ -36,25 +36,27 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     st.markdown("""
         <h2 style='text-align: center; color: #006d77;'>
             🔐 STUDENT LOGIN
         </h2>
     """, unsafe_allow_html=True)
+
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN")
 
     if login_btn:
-    if name.strip() and sid.strip():
-        st.session_state.logged_in = True
-        st.session_state.name = name
-        st.session_state.sid = sid
-        st.session_state.page = "Emotion Capture"
-        st.experimental_set_query_params(page="Emotion Capture")  # sets the URL param
-        st.experimental_rerun()
-
+        if name.strip() and sid.strip():
+            st.session_state.logged_in = True
+            st.session_state.name = name
+            st.session_state.sid = sid
+            st.session_state.page = "Emotion Capture"
+            st.experimental_set_query_params(page="Emotion Capture")
+            st.experimental_rerun()
+        else:
+            st.warning("Please enter both name and ID.")
 # Navigation taskbar
 
 def nav_bar():
