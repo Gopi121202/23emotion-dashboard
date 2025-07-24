@@ -89,41 +89,51 @@ def nav_bar():
     return nav_page
 
 # Emotion Detection
+
 def detect_emotion():
     st.subheader("📷 Capture Image")
-    image = st.camera_input("Take a picture")
+    col1, col2 = st.columns([1, 2])
 
-    if image:
-        img = Image.open(image)
-        img_np = np.array(img)
-        gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
-        faces = face_cascade.detectMultiScale(gray, 1.1, 5)
+    with col1:
+        st.markdown("""
+            <div style='border: 2px solid #006d77; padding: 10px; border-radius: 10px; width: 100%; max-width: 350px;'>
+        """, unsafe_allow_html=True)
+        image = st.camera_input("Take a picture")
+        st.markdown("</div>", unsafe_allow_html=True)
 
-        for (x, y, w, h) in faces:
-            roi = gray[y:y+h, x:x+w]
-            roi = cv2.resize(roi, (48, 48)) / 255.0
-            roi = roi.reshape(1, 48, 48, 1)
+    with col2:
+        if image:
+            img = Image.open(image)
+            img_np = np.array(img)
+            gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
+            faces = face_cascade.detectMultiScale(gray, 1.1, 5)
 
-            pred = model.predict(roi)
-            emotion = emotion_labels[np.argmax(pred)]
+            for (x, y, w, h) in faces:
+                roi = gray[y:y+h, x:x+w]
+                roi = cv2.resize(roi, (48, 48)) / 255.0
+                roi = roi.reshape(1, 48, 48, 1)
 
-            st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
+                pred = model.predict(roi)
+                emotion = emotion_labels[np.argmax(pred)]
 
-            if emotion in ['Angry', 'Sad', 'Disgust']:
-                st.error(f"⚠️ Alert: {emotion} emotion detected.")
+                st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
 
-            timestamp = datetime.now().isoformat()
-            entry = pd.DataFrame([[timestamp, st.session_state.name, st.session_state.sid, emotion]],
-                                 columns=["Timestamp", "Name", "ID", "Emotion"])
-            if os.path.exists(log_path):
-                entry.to_csv(log_path, mode="a", header=False, index=False)
+                if emotion in ['Angry', 'Sad', 'Disgust']:
+                    st.error(f"⚠️ Alert: {emotion} emotion detected.")
+
+                timestamp = datetime.now().isoformat()
+                entry = pd.DataFrame([[timestamp, st.session_state.name, st.session_state.sid, emotion]],
+                                     columns=["Timestamp", "Name", "ID", "Emotion"])
+                if os.path.exists(log_path):
+                    entry.to_csv(log_path, mode="a", header=False, index=False)
+                else:
+                    entry.to_csv(log_path, index=False)
+                break
             else:
-                entry.to_csv(log_path, index=False)
-            break
-        else:
-            st.warning("No face detected.")
+                st.warning("No face detected.")
 
 # Dashboard
+
 def show_dashboard():
     st.subheader("📊 Emotion Dashboard")
     if os.path.exists(log_path):
@@ -144,6 +154,7 @@ def show_dashboard():
         st.warning("No data yet.")
 
 # Data Log
+
 def show_log():
     st.subheader("📄 Logged Emotion Data")
     if os.path.exists(log_path):
