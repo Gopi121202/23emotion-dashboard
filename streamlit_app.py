@@ -66,29 +66,54 @@ def login_screen():
         padding: 2rem;
         color: white;
         border-radius: 10px;
+        text-align: center;
     }
-    label, input {
-        display: block;
+    .login-box input {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 5px;
         width: 100%;
+        border: none;
+    }
+    .login-box button {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #ffffff;
+        color: #00274d;
+        font-weight: bold;
+        width: 100%;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
     }
     </style>
     <div class="login-container">
         <div class="left"></div>
         <div class="right">
             <div class="login-box">
-                <h2 style="text-align: center;">🔐 STUDENT LOGIN</h2>
+                <h2>🔐 STUDENT LOGIN</h2>
                 <form action="#">
-                    <label for="name">Enter your Name</label>
-                    <input id="name" name="name" type="text" placeholder="Name" class="stTextInput">
-                    <label for="sid">Enter your ID</label>
-                    <input id="sid" name="sid" type="text" placeholder="Student ID" class="stTextInput">
+                    <input id="name" name="name" type="text" placeholder="Enter your Name" class="stTextInput">
+                    <input id="sid" name="sid" type="text" placeholder="Enter your ID" class="stTextInput">
                 </form>
     """, unsafe_allow_html=True)
 
     name = st.text_input("", key="name_input")
     sid = st.text_input("", key="sid_input")
 
-    if st.button("LOGIN"):
+    login_btn = st.button("LOGIN")
+
+    st.markdown("""
+                <script>
+                    const loginBox = document.querySelector('.login-box');
+                    const inputs = loginBox.querySelectorAll('input');
+                    inputs[0].value = window.parent.document.querySelector('[data-testid="stTextInput"] input[name=name_input]').value;
+                    inputs[1].value = window.parent.document.querySelector('[data-testid="stTextInput"] input[name=sid_input]').value;
+                </script>
+            </div></div></div>
+    """, unsafe_allow_html=True)
+
+    if login_btn:
         if name.strip() and sid.strip():
             st.session_state.logged_in = True
             st.session_state.name = name
@@ -96,8 +121,6 @@ def login_screen():
             st.experimental_rerun()
         else:
             st.warning("Please enter both name and ID.")
-
-    st.markdown("</div></div></div>", unsafe_allow_html=True)
 
 # Navigation popup
 def nav_bar():
