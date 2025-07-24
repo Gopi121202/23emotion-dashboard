@@ -59,41 +59,9 @@ def login_screen():
 # Navigation taskbar
 
 def nav_bar():
-    st.markdown("""
-    <style>
-    .navbar {
-        background-color: #006d77;
-        overflow: hidden;
-        display: flex;
-        justify-content: right;
-        padding: 10px 0;
-    }
-    .navbar a {
-        text-decoration: none;
-        color: white;
-        padding: 12px 20px;
-        text-align: center;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
-    .navbar a:hover {
-        background-color: #004c52;
-        border-radius: 5px;
-    }
-    </style>
-    <div class="navbar">
-        <div style='position: absolute; left: 35px; color: white; font-weight: bold; font-size: 35px;'>VIRTUAL EMODASH</div>
-        <a href="?nav=Emotion Capture">Emotion Capture</a>
-        <a href="?nav=Dashboard">Dashboard</a>
-        <a href="?nav=Data Log">Data Log</a>
-        <a href="?nav=Logout">Logout</a>
-    </div>
-    """, unsafe_allow_html=True)
-
-    query_params = st.experimental_get_query_params()
-    nav_page = query_params.get("nav", [st.session_state.get("page", "Emotion Capture")])[0]
-    st.session_state.page = nav_page
-    return nav_page
+    page = st.selectbox("Navigation", ["Emotion Capture", "Dashboard", "Data Log", "Logout"], index=["Emotion Capture", "Dashboard", "Data Log", "Logout"].index(st.session_state.get("page", "Emotion Capture")))
+    st.session_state.page = page
+    return page
 
 # Emotion Detection
 
@@ -103,7 +71,6 @@ def detect_emotion():
 
     with col1:
         image = st.camera_input("Take a picture")
-       
 
     with col2:
         if image:
@@ -180,5 +147,3 @@ else:
             st.experimental_set_query_params()
             st.success("You have been logged out.")
             st.experimental_rerun()
-
-
