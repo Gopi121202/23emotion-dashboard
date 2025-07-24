@@ -47,7 +47,7 @@ def login_screen():
             st.session_state.logged_in = True
             st.session_state.name = name
             st.session_state.sid = sid
-            st.experimental_set_query_params(nav="Emotion Capture")
+            st.session_state.page = "Emotion Capture"
             st.experimental_rerun()
         else:
             st.warning("Please enter both name and ID.")
@@ -78,15 +78,16 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
-        <a href="/?nav=Emotion Capture">Emotion Capture</a>
-        <a href="/?nav=Dashboard">Dashboard</a>
-        <a href="/?nav=Data Log">Data Log</a>
-        <a href="/?nav=Logout">Logout</a>
+        <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
+        <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
+        <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
+        <a href="#" onclick="window.location.search='?nav=Logout'">Logout</a>
     </div>
     """, unsafe_allow_html=True)
 
     query_params = st.experimental_get_query_params()
-    nav_page = query_params.get("nav", ["Emotion Capture"])[0]
+    nav_page = query_params.get("nav", [st.session_state.get("page", "Emotion Capture")])[0]
+    st.session_state.page = nav_page
     return nav_page
 
 # Emotion Detection
@@ -174,7 +175,17 @@ if not st.session_state.logged_in:
 else:
     set_plain_bg("background.png")
     page = nav_bar()
-    with st.container():
+    st.markdown(f"""
+    <h3 style='text-align:center; color:#006d77; animation: fadeIn 2s ease-in-out;'>👋 Welcome, {st.session_state.name}!</h3>
+    <style>
+        @keyframes fadeIn {{
+            0% {{ opacity: 0; transform: translateY(-20px); }}
+            100% {{ opacity: 1; transform: translateY(0); }}
+        }}
+    </style>
+""", unsafe_allow_html=True)
+
+with st.container():
         if page == "Emotion Capture":
             detect_emotion()
         elif page == "Dashboard":
@@ -183,5 +194,6 @@ else:
             show_log()
         elif page == "Logout":
             st.session_state.logged_in = False
+            st.session_state.page = "Emotion Capture"
             st.experimental_set_query_params()
             st.experimental_rerun()
