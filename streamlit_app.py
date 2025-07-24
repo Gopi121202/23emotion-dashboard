@@ -14,7 +14,7 @@ import base64
 st.set_page_config(layout="wide")
 
 # Load model and face cascade
-model = load_model("model.keras")
+model = load_model("model.keras")  # Ensure this was saved with keras_v3 format
 face_cascade = cv2.CascadeClassifier("haarcascade.xml")
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 log_path = "data/emotion_log.csv"
