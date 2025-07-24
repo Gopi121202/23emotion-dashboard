@@ -70,7 +70,9 @@ def detect_emotion():
     col1, col2 = st.columns([1, 2])
 
     with col1:
+        st.markdown("""<div style='border: 2px solid #006d77; padding: 10px; border-radius: 10px; width: 100%; max-width: 350px; text-align: center;'>""", unsafe_allow_html=True)
         image = st.camera_input("Take a picture")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     with col2:
         if image:
@@ -87,6 +89,19 @@ def detect_emotion():
                 pred = model.predict(roi)
                 emotion = emotion_labels[np.argmax(pred)]
 
+                # Log the emotion
+                log_entry = {
+                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "Name": st.session_state.name,
+                    "ID": st.session_state.sid,
+                    "Emotion": emotion
+                }
+                log_df = pd.DataFrame([log_entry])
+                if os.path.exists(log_path):
+                    log_df.to_csv(log_path, mode='a', header=False, index=False)
+                else:
+                    log_df.to_csv(log_path, mode='w', header=True, index=False)
+
                 st.image(img_np, use_column_width=True)
                 st.markdown(f"""
                     <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
@@ -97,7 +112,7 @@ def detect_emotion():
                     }}
                     </style>
                 """, unsafe_allow_html=True)
-                
+                st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
 # Dashboard page
 
