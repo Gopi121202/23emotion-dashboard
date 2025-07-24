@@ -39,26 +39,31 @@ def login_screen():
     set_plain_bg("background.png")
     st.markdown("""
     <style>
-    
+    .login-popup {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
     .login-box {
         background-color: #00274d;
         color: white;
         padding: 2rem;
         border-radius: 10px;
-        width: 100%;
+        width: 80%;
         max-width: 400px;
         text-align: center;
         box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
     }
     .login-box input, .stTextInput > div > input {
-        width: 100%;
+        width: 80%;
         padding: 10px;
         margin: 8px 0;
         border-radius: 5px;
         border: none;
     }
     .stButton button {
-        width: 100%;
+        width: 80%;
         padding: 10px;
         background-color: white;
         color: #00274d;
