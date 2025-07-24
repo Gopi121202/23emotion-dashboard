@@ -44,6 +44,7 @@ def login_screen():
     .login-container {
         display: flex;
         height: 100vh;
+        overflow: hidden;
     }
     .left {
         flex: 1;
@@ -66,16 +67,26 @@ def login_screen():
         color: white;
         border-radius: 10px;
     }
+    label, input {
+        display: block;
+        width: 100%;
+    }
     </style>
     <div class="login-container">
         <div class="left"></div>
         <div class="right">
             <div class="login-box">
+                <h2 style="text-align: center;">🔐 STUDENT LOGIN</h2>
+                <form action="#">
+                    <label for="name">Enter your Name</label>
+                    <input id="name" name="name" type="text" placeholder="Name" class="stTextInput">
+                    <label for="sid">Enter your ID</label>
+                    <input id="sid" name="sid" type="text" placeholder="Student ID" class="stTextInput">
+                </form>
     """, unsafe_allow_html=True)
 
-    st.title("🔐 STUDENT LOGIN")
-    name = st.text_input("Enter your Name")
-    sid = st.text_input("Enter your ID")
+    name = st.text_input("", key="name_input")
+    sid = st.text_input("", key="sid_input")
 
     if st.button("LOGIN"):
         if name.strip() and sid.strip():
