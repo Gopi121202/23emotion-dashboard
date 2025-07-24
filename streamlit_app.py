@@ -73,10 +73,7 @@ def login_screen():
         margin-top: 15px;
     }
     </style>
-    <div class="login-popup">
-        <div class="login-box">
-    """, unsafe_allow_html=True)
-
+   
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
