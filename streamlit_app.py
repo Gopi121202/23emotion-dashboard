@@ -173,7 +173,7 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     page = nav_bar()
     st.markdown(f"""
     <h3 style='text-align:center; color:#006d77; animation: fadeIn 2s ease-in-out;'>👋 Welcome, {st.session_state.name}!</h3>
@@ -183,9 +183,9 @@ else:
             100% {{ opacity: 1; transform: translateY(0); }}
         }}
     </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
-with st.container():
+    with st.container():
         if page == "Emotion Capture":
             detect_emotion()
         elif page == "Dashboard":
