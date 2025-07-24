@@ -118,7 +118,7 @@ def detect_emotion():
 
                 st.image(img_np, use_column_width=True)
                 st.markdown(f"""
-                    <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
+                    <h1 style='text-align:center; color:red; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
                     <style>
                     @keyframes popIn {{
                         0% {{ transform: scale(0.8); opacity: 0; }}
@@ -126,7 +126,7 @@ def detect_emotion():
                     }}
                     </style>
                 """, unsafe_allow_html=True)
-                st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
+               
 
 
 # Main logic
