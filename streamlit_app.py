@@ -43,6 +43,7 @@ def login_screen():
         display: flex;
         justify-content: center;
         align-items: center;
+        text-align: center;
         height: 100vh;
     }
     .login-box {
@@ -50,20 +51,20 @@ def login_screen():
         color: white;
         padding: 2rem;
         border-radius: 10px;
-        width: 80%;
+        width: 50%;
         max-width: 400px;
         text-align: center;
         box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
     }
     .login-box input, .stTextInput > div > input {
-        width: 80%;
+        width: 50%;
         padding: 10px;
         margin: 8px 0;
         border-radius: 5px;
         border: none;
     }
     .stButton button {
-        width: 80%;
+        width: 50%;
         padding: 10px;
         background-color: white;
         color: #00274d;
