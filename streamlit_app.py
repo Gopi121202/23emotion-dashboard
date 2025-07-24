@@ -39,12 +39,7 @@ def login_screen():
     set_plain_bg("background.png")
     st.markdown("""
     <style>
-    .login-popup {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
+    
     .login-box {
         background-color: #00274d;
         color: white;
