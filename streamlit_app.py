@@ -36,47 +36,46 @@ def set_blurred_bg(image_path):
         }}
         </style>
     ''', unsafe_allow_html=True)
+
+# Center-aligned login layout
 def login_screen():
     st.markdown("""
     <style>
-    .login-container {
-        display: flex;
-        height: 100vh;
-    }
-    .left {
-        flex: 1;
-        background-image: url('background.jpg');
-        background-size: cover;
-        background-position: center;
-    }
-    .right {
-        flex: 1;
-        background-color: #00274d;
+    .login-wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 100vh;
     }
     .login-box {
-        width: 80%;
-        max-width: 400px;
         background-color: #00274d;
-        padding: 2rem;
         color: white;
+        padding: 2rem;
         border-radius: 10px;
+        width: 100%;
+        max-width: 400px;
         text-align: center;
     }
-    input, .stTextInput > div > input {
-        background-color: white;
-        color: black;
-        padding: 10px;
-        border-radius: 5px;
+    .login-box input, .stTextInput > div > input {
         width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        border-radius: 5px;
+        border: none;
+    }
+    .stButton button {
+        width: 100%;
+        padding: 10px;
+        background-color: white;
+        color: #00274d;
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+        margin-top: 15px;
     }
     </style>
-    <div class="login-container">
-        <div class="left"></div>
-        <div class="right">
-            <div class="login-box">
+    <div class="login-wrapper">
+        <div class="login-box">
     """, unsafe_allow_html=True)
 
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
@@ -84,7 +83,10 @@ def login_screen():
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN")
 
-    st.markdown("</div></div></div>", unsafe_allow_html=True)
+    st.markdown("""
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     if login_btn:
         if name.strip() and sid.strip():
