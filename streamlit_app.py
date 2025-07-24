@@ -37,52 +37,10 @@ def set_plain_bg(image_path):
 
 def login_screen():
     set_plain_bg("background.png")
-    st.markdown("""
-    <style>
-    .login-popup {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-    .login-box {
-        background-color: #00274d;
-        color: white;
-        padding: 2rem;
-        border-radius: 10px;
-        width: 100%;
-        max-width: 400px;
-        text-align: center;
-        box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
-    }
-    .login-box input, .stTextInput > div > input {
-        width: 100%;
-        padding: 10px;
-        margin: 8px 0;
-        border-radius: 5px;
-        border: none;
-    }
-    .stButton button {
-        width: 100%;
-        padding: 10px;
-        background-color: white;
-        color: #00274d;
-        font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        margin-top: 15px;
-    }
-    </style>
-   
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN")
-
-    st.markdown("""
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
 
     if login_btn:
         if name.strip() and sid.strip():
