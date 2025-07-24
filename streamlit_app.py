@@ -36,7 +36,7 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.jpg")
+    set_plain_bg("background.png")
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
