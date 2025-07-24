@@ -97,7 +97,6 @@ def detect_emotion():
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.markdown("""<div style='border: 2px solid #006d77; padding: 10px; border-radius: 10px; width: 100%; max-width: 350px; text-align: center;'>""", unsafe_allow_html=True)
         image = st.camera_input("Take a picture")
         st.markdown("</div>", unsafe_allow_html=True)
 
