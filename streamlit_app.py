@@ -1,143 +1,190 @@
+# Final Streamlit App with All UI Enhancements
+
 import streamlit as st
 import cv2
 import numpy as np
-from PIL import Image
-from datetime import datetime
-import os
 import pandas as pd
+from datetime import datetime
+from PIL import Image
 from tensorflow.keras.models import load_model
+import os
 import base64
 
-# ======== BACKGROUND IMAGE SETUP ==========
-def set_bg_image(image_file):
-    with open(image_file, "rb") as f:
-        data = f.read()
-    encoded = base64.b64encode(data).decode()
-    page_bg = f"""
+# Configuration
+st.set_page_config(layout="wide")
+
+# Load model and face cascade
+model = load_model("model.keras")
+face_cascade = cv2.CascadeClassifier("haarcascade.xml")
+emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+log_path = "data/emotion_log.csv"
+os.makedirs("data", exist_ok=True)
+
+# Background blur function
+def set_blurred_bg(image_path):
+    with open(image_path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+    st.markdown(f'''
+        <style>
+        .stApp {{
+            background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
+                        url("data:image/jpg;base64,{encoded}");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }}
+        </style>
+    ''', unsafe_allow_html=True)
+
+# Right-aligned login layout
+def login_screen():
+    st.markdown("""
     <style>
-    .stApp {{
-        background-image: url("data:image/jpg;base64,{encoded}");
+    .login-container {
+        display: flex;
+        height: 100vh;
+    }
+    .left {
+        flex: 1;
+        background-image: url('background.jpg');
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-    }}
-    </style>
-    """
-    st.markdown(page_bg, unsafe_allow_html=True)
-
-set_bg_image("background.jpg")
-
-# ======== LOGIN BOX CSS ==========
-st.markdown("""
-    <style>
+    }
+    .right {
+        flex: 1;
+        background-color: #00274d;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
     .login-box {
-        background-color: rgba(255, 255, 255, 0.9);
-        padding: 2rem;
-        border-radius: 10px;
+        width: 80%;
         max-width: 400px;
-        margin: auto;
-        box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+        background-color: #00274d;
+        padding: 2rem;
+        color: white;
+        border-radius: 10px;
     }
     </style>
-""", unsafe_allow_html=True)
+    <div class="login-container">
+        <div class="left"></div>
+        <div class="right">
+            <div class="login-box">
+    """, unsafe_allow_html=True)
 
-# ======== SESSION STATE SETUP ==========
-if "logged_in" not in st.session_state:
-    st.session_state.logged_in = False
-if "student_name" not in st.session_state:
-    st.session_state.student_name = ""
-if "student_id" not in st.session_state:
-    st.session_state.student_id = ""
+    st.title("🔐 STUDENT LOGIN")
+    name = st.text_input("Enter your Name")
+    sid = st.text_input("Enter your ID")
 
-# ======== LOAD MODELS & SETUP ========
-model = load_model("model/model.keras")
-emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
-face_cascade = cv2.CascadeClassifier("haarcascade.xml")
-os.makedirs("data/captured", exist_ok=True)
-log_path = "data/emotion_log.csv"
+    if st.button("LOGIN"):
+        if name.strip() and sid.strip():
+            st.session_state.logged_in = True
+            st.session_state.name = name
+            st.session_state.sid = sid
+            st.experimental_rerun()
+        else:
+            st.warning("Please enter both name and ID.")
 
-# ======== LOGIN PAGE ==========
-def login_page():
-    st.title("LOGIN")
-    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("</div></div></div>", unsafe_allow_html=True)
 
-    with st.container():
-        st.markdown('<div class="login-box">', unsafe_allow_html=True)
+# Navigation popup
+def nav_bar():
+    st.markdown("""
+    <style>
+    .nav-popup {
+        text-align: center;
+        margin-top: 10px;
+    }
+    .nav-selectbox label, .css-2trqyj, .css-1wa3eu0 {
+        text-transform: uppercase;
+        text-align: center;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    st.markdown("## MENU")
+    option = st.selectbox("Select Page", ["Dashboard", "Data Log", "Logout"], index=0)
+    return option
 
-        name = st.text_input("Enter your Name")
-        sid = st.text_input("Enter your ID")
+# Emotion Detection
+def detect_emotion():
+    st.subheader("📷 Capture Image")
+    image = st.camera_input("Take a picture")
 
-        if st.button("Login"):
-            if name.strip() == "" or sid.strip() == "":
-                st.warning("Please enter both name and ID.")
+    if image:
+        img = Image.open(image)
+        img_np = np.array(img)
+        gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
+        faces = face_cascade.detectMultiScale(gray, 1.1, 5)
+
+        for (x, y, w, h) in faces:
+            roi = gray[y:y+h, x:x+w]
+            roi = cv2.resize(roi, (48, 48)) / 255.0
+            roi = roi.reshape(1, 48, 48, 1)
+
+            pred = model.predict(roi)
+            emotion = emotion_labels[np.argmax(pred)]
+
+            st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
+
+            if emotion in ['Angry', 'Sad', 'Disgust']:
+                st.error(f"⚠️ Alert: {emotion} emotion detected.")
+
+            timestamp = datetime.now().isoformat()
+            entry = pd.DataFrame([[timestamp, st.session_state.name, st.session_state.sid, emotion]],
+                                 columns=["Timestamp", "Name", "ID", "Emotion"])
+            if os.path.exists(log_path):
+                entry.to_csv(log_path, mode="a", header=False, index=False)
             else:
-                st.session_state.student_name = name
-                st.session_state.student_id = sid
-                st.session_state.logged_in = True
-                st.success("Login successful!")
+                entry.to_csv(log_path, index=False)
+            break
+        else:
+            st.warning("No face detected.")
 
-        st.markdown('</div>', unsafe_allow_html=True)
+# Dashboard
+def show_dashboard():
+    st.subheader("📊 Emotion Dashboard")
+    if os.path.exists(log_path):
+        df = pd.read_csv(log_path)
+        st.bar_chart(df['Emotion'].value_counts())
 
-# ======== LIVE VIDEO EMOTION DETECTION ==========
-def capture_video_emotions():
-    st.subheader("🎥 Live Emotion Detection")
-    run = st.checkbox('Start Webcam')
-    FRAME_WINDOW = st.image([])
+        df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+        trend = df.groupby(df['Timestamp'].dt.date)['Emotion'].apply(lambda x: x.mode()[0])
+        st.line_chart(trend.value_counts().sort_index())
 
-    cap = None
+        st.markdown("### 📌 Suggestions to Enhance Teaching:")
+        st.info("""
+        1. Track emotion trends to adjust teaching strategies.
+        2. Identify frequent negative emotions to improve engagement.
+        3. Use visual feedback to motivate students.
+        """)
+    else:
+        st.warning("No data yet.")
 
-    if run:
-        cap = cv2.VideoCapture(0)
-        while run:
-            ret, frame = cap.read()
-            if not ret:
-                st.warning("Failed to grab frame")
-                break
+# Data Log
+def show_log():
+    st.subheader("📄 Logged Emotion Data")
+    if os.path.exists(log_path):
+        df = pd.read_csv(log_path)
+        st.dataframe(df)
+    else:
+        st.info("No logs available.")
 
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, 1.1, 5)
+# Main logic
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
 
-            for (x, y, w, h) in faces:
-                roi = gray[y:y+h, x:x+w]
-                roi_resized = cv2.resize(roi, (48, 48)) / 255.0
-                roi_reshaped = roi_resized.reshape(1, 48, 48, 1)
-
-                prediction = model.predict(roi_reshaped)
-                emotion = emotion_labels[np.argmax(prediction)]
-
-                # Draw rectangle and label
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
-                cv2.putText(frame, emotion, (x, y-10),
-                            cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 0, 0), 2)
-
-                # Log data (one entry per detection session)
-                timestamp = datetime.now().isoformat()
-                log_entry = pd.DataFrame([[timestamp, st.session_state.student_name, st.session_state.student_id, emotion]],
-                                          columns=["Timestamp", "Name", "ID", "Emotion"])
-                if os.path.exists(log_path):
-                    log_entry.to_csv(log_path, mode="a", header=False, index=False)
-                else:
-                    log_entry.to_csv(log_path, index=False)
-
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            FRAME_WINDOW.image(frame)
-
-        cap.release()
-
-# ======== MAIN PAGE ==========
-def main_page():
-    st.title(f"Welcome, {st.session_state.student_name} 👋")
-    capture_video_emotions()
-    if st.button("Logout"):
-        st.session_state.logged_in = False
-
-# ======== ROUTING ==========
 if not st.session_state.logged_in:
-    login_page()
+    login_screen()
 else:
-    main_page()
-
-
-
-
+    set_blurred_bg("background.jpg")
+    page = nav_bar()
+    with st.container():
+        if page == "Dashboard":
+            detect_emotion()
+            show_dashboard()
+        elif page == "Data Log":
+            show_log()
+        elif page == "Logout":
+            st.session_state.logged_in = False
+            st.experimental_rerun()
