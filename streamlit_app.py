@@ -117,14 +117,14 @@ def detect_emotion():
 
                 st.image(img_np, use_column_width=True)
                st.markdown(f"""
-<h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
-<style>
-@keyframes popIn {{
-    0% {{ transform: scale(0.8); opacity: 0; }}
-    100% {{ transform: scale(1); opacity: 1; }}
-}}
-</style>
-""", unsafe_allow_html=True)
+               <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
+               <style>
+               @keyframes popIn {{
+               0% {{ transform: scale(0.8); opacity: 0; }}
+               100% {{ transform: scale(1); opacity: 1; }}
+               }}
+               </style>
+               """, unsafe_allow_html=True)
 
 with st.container():
         if page == "Emotion Capture":
