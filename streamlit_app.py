@@ -36,7 +36,7 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
@@ -78,7 +78,7 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
-        <div style='position: absolute; left: 20px; color: white; font-weight: bold; font-size: 40px;'>Virtual EmoDash</div>
+        <div style='position: absolute; left: 20px; color: white; font-weight: bold; font-size: 20px;'>Virtual EmoDash</div>
         <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
         <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
         <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
@@ -98,8 +98,10 @@ def detect_emotion():
     col1, col2 = st.columns([1, 2])
 
     with col1:
+        st.markdown("""<div style='border: 2px solid #006d77; padding: 10px; border-radius: 10px; width: 100%; max-width: 350px; text-align: center;'>""", unsafe_allow_html=True)
         image = st.camera_input("Take a picture")
-       
+        st.markdown("</div>", unsafe_allow_html=True)
+
     with col2:
         if image:
             img = Image.open(image)
@@ -116,15 +118,16 @@ def detect_emotion():
                 emotion = emotion_labels[np.argmax(pred)]
 
                 st.image(img_np, use_column_width=True)
-               st.markdown(f"""
-               <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
-               <style>
-               @keyframes popIn {{
-               0% {{ transform: scale(0.8); opacity: 0; }}
-               100% {{ transform: scale(1); opacity: 1; }}
-               }}
-               </style>
-               """, unsafe_allow_html=True)
+                st.markdown(f"""
+                    <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
+                    <style>
+                    @keyframes popIn {{
+                        0% {{ transform: scale(0.8); opacity: 0; }}
+                        100% {{ transform: scale(1); opacity: 1; }}
+                    }}
+                    </style>
+                """, unsafe_allow_html=True)
+                st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
 with st.container():
         if page == "Emotion Capture":
