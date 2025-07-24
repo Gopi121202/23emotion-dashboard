@@ -98,9 +98,6 @@ def login_screen():
                 </form>
     """, unsafe_allow_html=True)
 
-    name = st.text_input("", key="name_input")
-    sid = st.text_input("", key="sid_input")
-
     login_btn = st.button("LOGIN")
 
     st.markdown("""
