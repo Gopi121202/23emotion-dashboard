@@ -38,7 +38,7 @@ def set_plain_bg(image_path):
 def login_screen():
     set_plain_bg("background.png")
     st.markdown("""
-        <h2 style='text-align: center; color: #006d77; font-weight: bold; margin-top: 30px;'>
+        <h2 style='text-align: center; color: #006d77;'>
             🔐 STUDENT LOGIN
         </h2>
     """, unsafe_allow_html=True)
@@ -82,7 +82,7 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
-        <div style='position: absolute; left: 35px; color: black; font-weight: bold; font-size: 35px;'>VIRTUAL EMODASH</div>
+        <div style='position: absolute; left: 30px; color: black; font-weight: bold; font-size: 25px;'>VIRTUAL EMODASH</div>
         <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
         <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
         <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
@@ -101,7 +101,7 @@ def detect_emotion():
     st.subheader("📷 Capture Image")
     col1, col2 = st.columns([1, 2])
 
-    with col1: 
+    with col1:
         image = st.camera_input("Take a picture")
        
 
@@ -122,7 +122,7 @@ def detect_emotion():
 
                 st.image(img_np, use_column_width=True)
                 st.markdown(f"""
-                    <h1 style='text-align:center; color:red; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
+                    <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
                     <style>
                     @keyframes popIn {{
                         0% {{ transform: scale(0.8); opacity: 0; }}
@@ -130,10 +130,34 @@ def detect_emotion():
                     }}
                     </style>
                 """, unsafe_allow_html=True)
-               
+                st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
+# Dashboard page
 
-# Main logic
+def show_dashboard():
+    st.subheader("📊 Emotion Trend Dashboard")
+    if os.path.exists(log_path):
+        df = pd.read_csv(log_path)
+        emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
+        st.line_chart(emotion_counts)
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button("Download Full CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
+    else:
+        st.info("No emotion data available to display.")
+
+# Data Log page
+
+def show_log():
+    st.subheader("🧾 Emotion Detection Log")
+    if os.path.exists(log_path):
+        df = pd.read_csv(log_path)
+        st.dataframe(df.tail(20))
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button("Download CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
+    else:
+        st.info("No logs found.")
+
+# Main routing logic
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 
@@ -142,7 +166,6 @@ if not st.session_state.logged_in:
 else:
     set_plain_bg("background.png")
     page = nav_bar()
-    st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
     with st.container():
         if page == "Emotion Capture":
@@ -155,4 +178,6 @@ else:
             st.session_state.logged_in = False
             st.session_state.page = "Emotion Capture"
             st.experimental_set_query_params()
+            st.success("You have been logged out.")
             st.experimental_rerun()
+
