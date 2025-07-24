@@ -36,7 +36,7 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
@@ -119,73 +119,9 @@ def detect_emotion():
                 emotion = emotion_labels[np.argmax(pred)]
 
                 st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
-                st.markdown(f"""<h2 style='color:#ff6347; text-transform: uppercase;'>DETECTED: {emotion}</h2>""", unsafe_allow_html=True)
+                st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
-                if emotion in ['Angry', 'Sad', 'Disgust']:
-                    st.error(f"⚠️ Alert: {emotion} emotion detected.")
-
-                timestamp = datetime.now().isoformat()
-                entry = pd.DataFrame([[timestamp, st.session_state.name, st.session_state.sid, emotion]],
-                                     columns=["Timestamp", "Name", "ID", "Emotion"])
-                if os.path.exists(log_path):
-                    entry.to_csv(log_path, mode="a", header=False, index=False)
-                else:
-                    entry.to_csv(log_path, index=False)
-                break
-            else:
-                st.warning("No face detected.")
-
-# Dashboard
-
-def show_dashboard():
-    st.subheader("📊 Emotion Dashboard")
-    if os.path.exists(log_path):
-        df = pd.read_csv(log_path)
-        st.bar_chart(df['Emotion'].value_counts())
-
-        df['Timestamp'] = pd.to_datetime(df['Timestamp'])
-        trend = df.groupby(df['Timestamp'].dt.date)['Emotion'].apply(lambda x: x.mode()[0])
-        st.line_chart(trend.value_counts().sort_index())
-
-        st.markdown("### 📌 Suggestions to Enhance Teaching:")
-        st.info("""
-        1. Track emotion trends to adjust teaching strategies.
-        2. Identify frequent negative emotions to improve engagement.
-        3. Use visual feedback to motivate students.
-        """)
-    else:
-        st.warning("No data yet.")
-
-# Data Log
-
-def show_log():
-    st.subheader("📄 Logged Emotion Data")
-    if os.path.exists(log_path):
-        df = pd.read_csv(log_path)
-        st.dataframe(df)
-    else:
-        st.info("No logs available.")
-
-# Main logic
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
-
-if not st.session_state.logged_in:
-    login_screen()
-else:
-    set_plain_bg("background.png")
-    page = nav_bar()
-    st.markdown(f"""
-    <h3 style='text-align:center; color:#006d77; animation: fadeIn 2s ease-in-out;'>👋 Welcome, {st.session_state.name}!</h3>
-    <style>
-        @keyframes fadeIn {{
-            0% {{ opacity: 0; transform: translateY(-20px); }}
-            100% {{ opacity: 1; transform: translateY(0); }}
-        }}
-    </style>
-    """, unsafe_allow_html=True)
-
-    with st.container():
+with st.container():
         if page == "Emotion Capture":
             detect_emotion()
         elif page == "Dashboard":
