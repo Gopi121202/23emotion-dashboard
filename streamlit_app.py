@@ -78,7 +78,7 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
-        <div style='position: absolute; left: 40px; color: black; font-weight: strongbold; font-size: 40px;'>Virtual EmoDash</div>
+        <div style='position: absolute; left: 30px; color: black; font-weight: strongbold; font-size: 40px;'>Virtual EmoDash</div>
         <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
         <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
         <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
