@@ -59,9 +59,51 @@ def login_screen():
 # Navigation taskbar
 
 def nav_bar():
-    page = st.selectbox("Navigation", ["Emotion Capture", "Dashboard", "Data Log", "Logout"], index=["Emotion Capture", "Dashboard", "Data Log", "Logout"].index(st.session_state.get("page", "Emotion Capture")))
-    st.session_state.page = page
-    return page
+    st.markdown("""
+    <style>
+    .topnav {
+        background-color: #006d77;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        padding: 12px;
+    }
+    .topnav a {
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        text-transform: uppercase;
+    }
+    .topnav a:hover {
+        background-color: #004c52;
+        color: white;
+        border-radius: 5px;
+    }
+    </style>
+    <div class="topnav">
+        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Emotion Capture'}, '*')">Emotion Capture</a>
+        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Dashboard'}, '*')">Dashboard</a>
+        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Data Log'}, '*')">Data Log</a>
+        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Logout'}, '*')">Logout</a>
+    </div>
+    <script>
+        window.addEventListener("message", (event) => {
+            if (event.data.type === "page") {{
+                window.location.search = "?page=" + encodeURIComponent(event.data.value);
+            }}
+        });
+    </script>
+    """, unsafe_allow_html=True)
+
+    # Read and sync page selection
+    query_params = st.experimental_get_query_params()
+    nav_page = query_params.get("page", [st.session_state.get("page", "Emotion Capture")])[0]
+    st.session_state.page = nav_page
+    return nav_page
 
 # Emotion Detection
 
