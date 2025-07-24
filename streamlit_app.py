@@ -82,11 +82,11 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
-        <div style='position: absolute; left: 30px; color: black; font-weight: bold; font-size: 25px;'>VIRTUAL EMODASH</div>
-        <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
-        <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
-        <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
-        <a href="#" onclick="window.location.search='?nav=Logout'">Logout</a>
+        <div style='position: absolute; left: 35px; color: white; font-weight: bold; font-size: 35px;'>VIRTUAL EMODASH</div>
+        <a href="?nav=Emotion Capture">Emotion Capture</a>
+        <a href="?nav=Dashboard">Dashboard</a>
+        <a href="?nav=Data Log">Data Log</a>
+        <a href="?nav=Logout">Logout</a>
     </div>
     """, unsafe_allow_html=True)
 
@@ -180,4 +180,5 @@ else:
             st.experimental_set_query_params()
             st.success("You have been logged out.")
             st.experimental_rerun()
+
 
