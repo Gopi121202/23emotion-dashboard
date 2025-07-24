@@ -97,9 +97,7 @@ def detect_emotion():
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.markdown("""
-            <div style='border: 2px solid #006d77; padding: 10px; border-radius: 10px; width: 100%; max-width: 350px;'>
-        """, unsafe_allow_html=True)
+        st.markdown("""<div style='border: 2px solid #006d77; padding: 10px; border-radius: 10px; width: 100%; max-width: 350px; text-align: center;'>""", unsafe_allow_html=True)
         image = st.camera_input("Take a picture")
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -121,18 +119,7 @@ def detect_emotion():
                 st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
                 st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
-# Main logic
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
-
-if not st.session_state.logged_in:
-    login_screen()
-else:
-    set_plain_bg("background.png")
-    page = nav_bar()
-    st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
-
-    with st.container():
+with st.container():
         if page == "Emotion Capture":
             detect_emotion()
         elif page == "Dashboard":
