@@ -47,14 +47,13 @@ def login_screen():
     login_btn = st.button("LOGIN")
 
     if login_btn:
-        if name.strip() and sid.strip():
-            st.session_state.logged_in = True
-            st.session_state.name = name
-            st.session_state.sid = sid
-            st.session_state.page = "Emotion Capture"
-            st.experimental_rerun()
-        else:
-            st.warning("Please enter both name and ID.")
+    if name.strip() and sid.strip():
+        st.session_state.logged_in = True
+        st.session_state.name = name
+        st.session_state.sid = sid
+        st.session_state.page = "Emotion Capture"
+        st.experimental_set_query_params(page="Emotion Capture")  # sets the URL param
+        st.experimental_rerun()
 
 # Navigation taskbar
 
@@ -173,6 +172,10 @@ def show_log():
 # Main routing logic
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
+    query_params = st.experimental_get_query_params()
+    page = query_params.get("page", [st.session_state.get("page", "Emotion Capture")])[0]
+    st.session_state.page = page
+
 
 if not st.session_state.logged_in:
     login_screen()
@@ -190,6 +193,6 @@ else:
         elif page == "Logout":
             st.session_state.logged_in = False
             st.session_state.page = "Emotion Capture"
-            st.experimental_set_query_params()
             st.success("You have been logged out.")
+            st.experimental_set_query_params(page="Emotion Capture")
             st.experimental_rerun()
