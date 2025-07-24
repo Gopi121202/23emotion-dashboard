@@ -119,7 +119,18 @@ def detect_emotion():
                 st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
                 st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
-with st.container():
+# Main logic
+if 'logged_in' not in st.session_state:
+    st.session_state.logged_in = False
+
+if not st.session_state.logged_in:
+    login_screen()
+else:
+    set_plain_bg("background.png")
+    page = nav_bar()
+    st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
+
+    with st.container():
         if page == "Emotion Capture":
             detect_emotion()
         elif page == "Dashboard":
@@ -131,3 +142,4 @@ with st.container():
             st.session_state.page = "Emotion Capture"
             st.experimental_set_query_params()
             st.experimental_rerun()
+
