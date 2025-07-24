@@ -36,7 +36,7 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
@@ -47,6 +47,7 @@ def login_screen():
             st.session_state.logged_in = True
             st.session_state.name = name
             st.session_state.sid = sid
+            st.experimental_set_query_params(nav="Emotion Capture")
             st.experimental_rerun()
         else:
             st.warning("Please enter both name and ID.")
@@ -117,6 +118,7 @@ def detect_emotion():
                 emotion = emotion_labels[np.argmax(pred)]
 
                 st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
+                st.markdown(f"""<h2 style='color:#ff6347; text-transform: uppercase;'>DETECTED: {emotion}</h2>""", unsafe_allow_html=True)
 
                 if emotion in ['Angry', 'Sad', 'Disgust']:
                     st.error(f"⚠️ Alert: {emotion} emotion detected.")
@@ -170,7 +172,7 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     page = nav_bar()
     with st.container():
         if page == "Emotion Capture":
@@ -181,4 +183,5 @@ else:
             show_log()
         elif page == "Logout":
             st.session_state.logged_in = False
+            st.experimental_set_query_params()
             st.experimental_rerun()
