@@ -98,7 +98,7 @@ def detect_emotion():
 
     with col1:
         image = st.camera_input("Take a picture")
-        st.markdown("</div>", unsafe_allow_html=True)
+      
 
     with col2:
         if image:
