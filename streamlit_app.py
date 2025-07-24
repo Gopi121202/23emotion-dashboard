@@ -78,6 +78,7 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
+        <div style='position: absolute; left: 20px; color: white; font-weight: bold; font-size: 40px;'>Virtual EmoDash</div>
         <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
         <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
         <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
@@ -98,8 +99,7 @@ def detect_emotion():
 
     with col1:
         image = st.camera_input("Take a picture")
-      
-
+       
     with col2:
         if image:
             img = Image.open(image)
@@ -115,21 +115,19 @@ def detect_emotion():
                 pred = model.predict(roi)
                 emotion = emotion_labels[np.argmax(pred)]
 
-                st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
+                st.image(img_np, use_column_width=True)
+                st.markdown(f"""
+                <h1 style='text-align:center; color:#006d77; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
+                <style>
+                @keyframes popIn {
+                    0% { transform: scale(0.8); opacity: 0; }
+                    100% { transform: scale(1); opacity: 1; }
+                }
+                </style>
+                """, unsafe_allow_html=True)
                 st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
-# Main logic
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = False
-
-if not st.session_state.logged_in:
-    login_screen()
-else:
-    set_plain_bg("background.png")
-    page = nav_bar()
-    st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
-
-    with st.container():
+with st.container():
         if page == "Emotion Capture":
             detect_emotion()
         elif page == "Dashboard":
@@ -141,4 +139,3 @@ else:
             st.session_state.page = "Emotion Capture"
             st.experimental_set_query_params()
             st.experimental_rerun()
-
