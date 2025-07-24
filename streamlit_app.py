@@ -61,7 +61,7 @@ def nav_bar():
         background-color: #006d77;
         overflow: hidden;
         display: flex;
-        justify-content: left;
+        justify-content: right;
         padding: 10px 0;
     }
     .navbar a {
@@ -78,7 +78,7 @@ def nav_bar():
     }
     </style>
     <div class="navbar">
-        <div style='position: absolute; left: 30px; color: black; font-weight: strongbold; font-size: 40px;'>Virtual EmoDash</div>
+        <div style='position: left; left: 30px; color: blue; font-weight: strongbold; font-size: 35px;'>VIRTUAL EMODASh</div>
         <a href="#" onclick="window.location.search='?nav=Emotion Capture'">Emotion Capture</a>
         <a href="#" onclick="window.location.search='?nav=Dashboard'">Dashboard</a>
         <a href="#" onclick="window.location.search='?nav=Data Log'">Data Log</a>
