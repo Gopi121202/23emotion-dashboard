@@ -128,7 +128,7 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_plain_bg("background.jpg")
+    set_plain_bg("background.png")
     page = nav_bar()
     st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
 
