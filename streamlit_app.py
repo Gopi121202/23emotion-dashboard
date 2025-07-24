@@ -36,7 +36,7 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.jpg")
+    set_plain_bg("background.png")
     st.markdown("""
     <style>
     .login-popup {
@@ -204,7 +204,7 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_plain_bg("background.jpg")
+    set_plain_bg("background.png")
     page = nav_bar()
     with st.container():
         if page == "Emotion Capture":
