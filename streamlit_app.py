@@ -14,34 +14,32 @@ import base64
 st.set_page_config(layout="wide")
 
 # Load model and face cascade
-model = load_model("model/model.keras")  # Ensure this was saved with keras_v3 format
+model = load_model("model/model.keras")
 face_cascade = cv2.CascadeClassifier("haarcascade.xml")
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 log_path = "data/emotion_log.csv"
 os.makedirs("data", exist_ok=True)
 
-# Background blur function
-def set_blurred_bg(image_path):
+# Normal background image (non-blurred)
+def set_plain_bg(image_path):
     with open(image_path, "rb") as f:
         encoded = base64.b64encode(f.read()).decode()
     st.markdown(f'''
         <style>
         .stApp {{
-            background: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0.5)),
-                        url("data:image/jpg;base64,{encoded}");
+            background: url("data:image/jpg;base64,{encoded}") no-repeat center center fixed;
             background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
         }}
         </style>
     ''', unsafe_allow_html=True)
 
-# Center-aligned login layout
+# Login screen
+
 def login_screen():
+    set_plain_bg("background.jpg")
     st.markdown("""
     <style>
-    .login-wrapper {
+    .login-popup {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -55,6 +53,7 @@ def login_screen():
         width: 100%;
         max-width: 400px;
         text-align: center;
+        box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
     }
     .login-box input, .stTextInput > div > input {
         width: 100%;
@@ -74,7 +73,7 @@ def login_screen():
         margin-top: 15px;
     }
     </style>
-    <div class="login-wrapper">
+    <div class="login-popup">
         <div class="login-box">
     """, unsafe_allow_html=True)
 
@@ -186,7 +185,7 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_blurred_bg("background.jpg")
+    set_plain_bg("background.jpg")
     page = nav_bar()
     with st.container():
         if page == "Dashboard":
