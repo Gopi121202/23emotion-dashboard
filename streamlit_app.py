@@ -36,14 +36,13 @@ def set_plain_bg(image_path):
 # Login screen
 
 def login_screen():
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     st.markdown("""
     <style>
     .login-popup {
         display: flex;
         justify-content: center;
         align-items: center;
-        text-align: center;
         height: 100vh;
     }
     .login-box {
@@ -51,20 +50,20 @@ def login_screen():
         color: white;
         padding: 2rem;
         border-radius: 10px;
-        width: 50%;
+        width: 100%;
         max-width: 400px;
         text-align: center;
         box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
     }
     .login-box input, .stTextInput > div > input {
-        width: 50%;
+        width: 100%;
         padding: 10px;
         margin: 8px 0;
         border-radius: 5px;
         border: none;
     }
     .stButton button {
-        width: 50%;
+        width: 100%;
         padding: 10px;
         background-color: white;
         color: #00274d;
@@ -78,7 +77,7 @@ def login_screen():
         <div class="login-box">
     """, unsafe_allow_html=True)
 
-    st.markdown("### STUDENT LOGIN", unsafe_allow_html=True)
+    st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN")
@@ -97,27 +96,46 @@ def login_screen():
         else:
             st.warning("Please enter both name and ID.")
 
-# Navigation popup
+# Navigation taskbar
+
 def nav_bar():
     st.markdown("""
     <style>
-    .nav-popup {
-        text-align: center;
-        margin-top: 10px;
+    .navbar {
+        background-color: #006d77;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        padding: 10px 0;
     }
-    .nav-selectbox label, .css-2trqyj, .css-1wa3eu0 {
-        text-transform: uppercase;
+    .navbar a {
+        text-decoration: none;
+        color: white;
+        padding: 12px 20px;
         text-align: center;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+    .navbar a:hover {
+        background-color: #004c52;
+        border-radius: 5px;
     }
     </style>
+    <div class="navbar">
+        <a href="/?nav=Emotion Capture">Emotion Capture</a>
+        <a href="/?nav=Dashboard">Dashboard</a>
+        <a href="/?nav=Data Log">Data Log</a>
+        <a href="/?nav=Logout">Logout</a>
+    </div>
     """, unsafe_allow_html=True)
-    st.markdown("## MENU")
-    option = st.selectbox("Select Page", ["Dashboard", "Data Log", "Logout"], index=0)
-    return option
+
+    query_params = st.experimental_get_query_params()
+    nav_page = query_params.get("nav", ["Emotion Capture"])[0]
+    return nav_page
 
 # Emotion Detection
 def detect_emotion():
-    st.subheader("CAPTURE IMAGE")
+    st.subheader("📷 Capture Image")
     image = st.camera_input("Take a picture")
 
     if image:
@@ -137,7 +155,7 @@ def detect_emotion():
             st.image(img_np, caption=f"Detected Emotion: {emotion}", use_column_width=True)
 
             if emotion in ['Angry', 'Sad', 'Disgust']:
-                st.error(f"⚠️ ALERT: {emotion} emotion detected.")
+                st.error(f"⚠️ Alert: {emotion} emotion detected.")
 
             timestamp = datetime.now().isoformat()
             entry = pd.DataFrame([[timestamp, st.session_state.name, st.session_state.sid, emotion]],
@@ -152,7 +170,7 @@ def detect_emotion():
 
 # Dashboard
 def show_dashboard():
-    st.subheader("EMOTION DASHBOARD")
+    st.subheader("📊 Emotion Dashboard")
     if os.path.exists(log_path):
         df = pd.read_csv(log_path)
         st.bar_chart(df['Emotion'].value_counts())
@@ -172,7 +190,7 @@ def show_dashboard():
 
 # Data Log
 def show_log():
-    st.subheader("LOGGED EMOTION DATA")
+    st.subheader("📄 Logged Emotion Data")
     if os.path.exists(log_path):
         df = pd.read_csv(log_path)
         st.dataframe(df)
@@ -186,11 +204,12 @@ if 'logged_in' not in st.session_state:
 if not st.session_state.logged_in:
     login_screen()
 else:
-    set_plain_bg("background.png")
+    set_plain_bg("background.jpg")
     page = nav_bar()
     with st.container():
-        if page == "Dashboard":
+        if page == "Emotion Capture":
             detect_emotion()
+        elif page == "Dashboard":
             show_dashboard()
         elif page == "Data Log":
             show_log()
