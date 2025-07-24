@@ -130,7 +130,7 @@ def detect_emotion():
                     }}
                     </style>
                 """, unsafe_allow_html=True)
-                st.markdown(f"""<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>""", unsafe_allow_html=True)
+                
 
 # Dashboard page
 
