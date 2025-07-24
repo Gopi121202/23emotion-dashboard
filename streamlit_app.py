@@ -37,7 +37,11 @@ def set_plain_bg(image_path):
 
 def login_screen():
     set_plain_bg("background.png")
-    st.markdown("### 🔐 STUDENT LOGIN", unsafe_allow_html=True)
+   t.markdown("""
+    <h2 style='text-align: center; color: #006d77;'>
+        🔐 STUDENT LOGIN
+    </h2>
+""", unsafe_allow_html=True)
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN")
