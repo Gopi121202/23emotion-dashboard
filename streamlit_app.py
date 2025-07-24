@@ -26,6 +26,7 @@ def set_plain_bg(image_path):
         encoded = base64.b64encode(f.read()).decode()
     st.markdown(f'''
         <style>
+         text-align: center;
         .stApp {{
             background: url("data:image/jpg;base64,{encoded}") no-repeat center center fixed;
             background-size: cover;
