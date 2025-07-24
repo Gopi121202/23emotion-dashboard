@@ -89,35 +89,27 @@ def login_screen():
     </style>
     <div class="login-container">
         <div class="left"></div>
-        <div class="center">
+        <div class="right">
             <div class="login-box">
                 <h2>🔐 STUDENT LOGIN</h2>
-                <form action="#">
-                    <input id="name" name="name" type="text" placeholder="Enter your Name" class="stTextInput">
-                    <input id="sid" name="sid" type="text" placeholder="Enter your ID" class="stTextInput">
+                <form action="#" method="post">
+                    <input type="text" id="name_input" name="name" placeholder="Enter your Name">
+                    <input type="text" id="sid_input" name="sid" placeholder="Enter your ID">
+                    <button type="submit">LOGIN</button>
                 </form>
+            </div>
+        </div>
+    </div>
     """, unsafe_allow_html=True)
 
-    login_btn = st.button("LOGIN")
+    name = st.experimental_get_query_params().get("name_input", [""])[0]
+    sid = st.experimental_get_query_params().get("sid_input", [""])[0]
 
-    st.markdown("""
-                <script>
-                    const loginBox = document.querySelector('.login-box');
-                    const inputs = loginBox.querySelectorAll('input');
-                    inputs[0].value = window.parent.document.querySelector('[data-testid="stTextInput"] input[name=name_input]').value;
-                    inputs[1].value = window.parent.document.querySelector('[data-testid="stTextInput"] input[name=sid_input]').value;
-                </script>
-            </div></div></div>
-    """, unsafe_allow_html=True)
-
-    if login_btn:
-        if name.strip() and sid.strip():
-            st.session_state.logged_in = True
-            st.session_state.name = name
-            st.session_state.sid = sid
-            st.experimental_rerun()
-        else:
-            st.warning("Please enter both name and ID.")
+    if name.strip() and sid.strip():
+        st.session_state.logged_in = True
+        st.session_state.name = name
+        st.session_state.sid = sid
+        st.experimental_rerun()
 
 # Navigation popup
 def nav_bar():
