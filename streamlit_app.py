@@ -85,26 +85,18 @@ def nav_bar():
     }
     </style>
     <div class="topnav">
-        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Emotion Capture'}, '*')">Emotion Capture</a>
-        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Dashboard'}, '*')">Dashboard</a>
-        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Data Log'}, '*')">Data Log</a>
-        <a href="#" onclick="window.parent.postMessage({type: 'page', value: 'Logout'}, '*')">Logout</a>
+        <a href="?page=Emotion Capture">Emotion Capture</a>
+        <a href="?page=Dashboard">Dashboard</a>
+        <a href="?page=Data Log">Data Log</a>
+        <a href="?page=Logout">Logout</a>
     </div>
-    <script>
-        window.addEventListener("message", (event) => {
-            if (event.data.type === "page") {{
-                window.location.search = "?page=" + encodeURIComponent(event.data.value);
-            }}
-        });
-    </script>
     """, unsafe_allow_html=True)
 
-    # Read and sync page selection
+    # This part syncs the page with the selected query param
     query_params = st.experimental_get_query_params()
     nav_page = query_params.get("page", [st.session_state.get("page", "Emotion Capture")])[0]
     st.session_state.page = nav_page
     return nav_page
-
 # Emotion Detection
 
 def detect_emotion():
