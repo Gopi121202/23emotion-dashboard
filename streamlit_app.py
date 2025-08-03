@@ -245,7 +245,7 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(4, 4))
+        fig, ax = plt.subplots(figsize=(5, 4))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
@@ -257,7 +257,6 @@ def show_dashboard():
         ax.axis('equal')
         legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
         ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=False)
-        fig.tight_layout()
         st.pyplot(fig)
 
         csv = df.to_csv(index=False).encode('utf-8')
