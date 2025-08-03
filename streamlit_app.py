@@ -52,7 +52,6 @@ def set_plain_bg(image_path):
 def play_alert_script():
     st.markdown("""
         <script>
-        // simple pop sound via Web Audio API
         (function() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -143,8 +142,13 @@ def nav_bar():
 
     def make_btn(label, page_key, col):
         with col:
-            if st.button(label, key=f"nav_{page_key}"):
+            is_active = st.session_state.get("page", "") == page_key
+            btn = st.button(label, key=f"nav_{page_key}")
+            if btn:
                 st.session_state.page = page_key
+            # Visual active indicator
+            if is_active:
+                st.markdown(f"<style>.taskbar button#{'nav_' + page_key} {{ background: #00b7c2; }}</style>", unsafe_allow_html=True)
 
     make_btn("Home", "Home", cols[1])
     make_btn("Emotion Capture", "Emotion Capture", cols[2])
@@ -200,7 +204,6 @@ def detect_emotion():
             st.image(img_np, use_column_width=True)
             if detected_emotion:
                 if detected_emotion in alert_emotions:
-                    # play sound
                     play_alert_script()
                     st.markdown(f"""
                         <div style="background:#ffe6e6; padding:15px; border-radius:8px; margin:10px 0; border:2px solid #d62828;">
@@ -227,25 +230,9 @@ def show_dashboard():
         df = pd.read_csv(LOG_PATH)
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
 
-        # side by side: line chart + pie chart
         st.markdown("Emotion Distribution Over All Captures")
-        left, right = st.columns([2, 1])
-        with left:
-            st.line_chart(emotion_counts)
-
-        with right:
-            st.markdown("Percentage Breakdown")
-            total = emotion_counts.sum()
-            if total > 0:
-                percentages = (emotion_counts / total * 100).round(1)
-            else:
-                percentages = emotion_counts
-            # Pie chart via matplotlib
-            fig, ax = plt.subplots()
-            labels = [f"{emo} ({pct}%)" for emo, pct in zip(emotion_counts.index, percentages)]
-            ax.pie(emotion_counts.values, labels=labels, autopct=None, startangle=90)
-            ax.axis('equal')
-            st.pyplot(fig)
+        # Line chart
+        st.line_chart(emotion_counts)
 
         st.markdown("Summary Statistics")
         c1, c2 = st.columns(2)
@@ -253,6 +240,30 @@ def show_dashboard():
             st.metric("Total Entries", len(df))
         with c2:
             st.metric("Unique Students", df["ID"].nunique() if "ID" in df.columns else 0)
+
+        # Pie chart with legend to avoid overlapping
+        st.markdown("Breakdown by Emotion Percentage")
+        total = emotion_counts.sum()
+        if total > 0:
+            percentages = (emotion_counts / total * 100).round(1)
+        else:
+            percentages = emotion_counts
+
+        fig, ax = plt.subplots()
+        wedges, texts, autotexts = ax.pie(
+            emotion_counts.values,
+            autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
+            startangle=90,
+            pctdistance=0.7,
+            labeldistance=1.05,
+            wedgeprops={'linewidth': 1, 'edgecolor': 'white'}
+        )
+        ax.axis('equal')
+        legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
+        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1, 0.5))
+        fig.tight_layout()
+        st.pyplot(fig)
+
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Full CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
