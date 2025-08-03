@@ -275,7 +275,7 @@ def show_home():
             play_alert_script()
             st.markdown(f"""
                 <div style="background:#ffe6e6; padding:15px; border-radius:8px; margin:10px 0; border:2px solid #d62828;">
-                    <strong style="color:#a80000;">ALERT:</strong> Top emotion is <strong>{top_emotion.upper()}</strong>. Immediate attention suggested.
+                    <strong style="color:#d62828;">ALERT:</strong> Top emotion is <strong>{top_emotion.upper()}</strong>. Immediate attention suggested.
                 </div>
             """, unsafe_allow_html=True)
 
