@@ -7,6 +7,7 @@ from PIL import Image
 from tensorflow.keras.models import load_model
 import os
 import base64
+import matplotlib.pyplot as plt
 
 st.set_page_config(layout="wide")
 
@@ -141,7 +142,6 @@ def nav_bar():
         st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
 
     def make_btn(label, page_key, col):
-        active = "active" if st.session_state.get("page", "") == page_key else ""
         with col:
             if st.button(label, key=f"nav_{page_key}"):
                 st.session_state.page = page_key
@@ -226,8 +226,27 @@ def show_dashboard():
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
+
+        # side by side: line chart + pie chart
         st.markdown("Emotion Distribution Over All Captures")
-        st.line_chart(emotion_counts)
+        left, right = st.columns([2, 1])
+        with left:
+            st.line_chart(emotion_counts)
+
+        with right:
+            st.markdown("Percentage Breakdown")
+            total = emotion_counts.sum()
+            if total > 0:
+                percentages = (emotion_counts / total * 100).round(1)
+            else:
+                percentages = emotion_counts
+            # Pie chart via matplotlib
+            fig, ax = plt.subplots()
+            labels = [f"{emo} ({pct}%)" for emo, pct in zip(emotion_counts.index, percentages)]
+            ax.pie(emotion_counts.values, labels=labels, autopct=None, startangle=90)
+            ax.axis('equal')
+            st.pyplot(fig)
+
         st.markdown("Summary Statistics")
         c1, c2 = st.columns(2)
         with c1:
