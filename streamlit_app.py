@@ -228,7 +228,7 @@ def show_home():
     st.markdown("""
         <div style="background: rgba(255,255,255,0.9); padding:25px; border-radius:12px; max-width:1000px; margin:auto;">
             <h1 style="color:#E29578; text-align:center; margin:5px;">WELCOME TO VIRTUAL EMODASH</h1>
-            #<p style="text-align:center; font-size:14px; margin-top:0;">
+            <p style="color:#E29578; text-align:center; font-size:14px; margin-top:0;">
                 Real-time emotion-aware learning monitoring system for improving engagement and teaching effectiveness.
             </p>
         </div>
