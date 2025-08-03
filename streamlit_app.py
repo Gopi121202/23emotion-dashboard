@@ -253,7 +253,7 @@ def show_dashboard():
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
-            startangle=90,
+            startangle=80,
             pctdistance=0.7,
             labeldistance=1.05,
             wedgeprops={'linewidth': 1, 'edgecolor': 'white'}
