@@ -34,27 +34,25 @@ def set_plain_bg(image_path):
             </style>
         ''', unsafe_allow_html=True)
     else:
-        # fallback solid background
         st.markdown("""
             <style>
             .stApp { background: #e8f6f9; }
             </style>
         """, unsafe_allow_html=True)
 
-# Login screen
-def login_screen():
-    set_plain_bg("background.png")
+# Login form used on Home
+def login_form():
     st.markdown("""
-        <div style="max-width:700px; margin:auto; padding:40px; background:#0f4c75; border-radius:12px; color:white;">
-            <h2 style='text-align: center; margin-bottom:5px;'>🔐 STUDENT LOGIN</h2>
-            <p style='text-align:center; margin-top:0;'>Welcome to Virtual EmoDash. Please enter your details to continue.</p>
-            <div style="display:flex; gap:20px; justify-content:center; flex-wrap:wrap;">
-                <div style="flex:1; min-width:250px;">
+        <div style="max-width:700px; margin:auto; padding:30px; background:#0f4c75; border-radius:12px; color:white;">
+            <h2 style='text-align: center; margin-bottom:5px;'>LOGIN</h2>
+            <p style='text-align:center; margin-top:0;'>Please enter your details to continue.</p>
+            <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+                <div style="flex:1; min-width:220px;">
                     <label style="color:white; font-weight:bold;">Name</label>
                     <input type="text" id="name_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your Name">
                 </div>
-                <div style="flex:1; min-width:250px;">
-                    <label style="color:white; font-weight:bold;">Student ID</label>
+                <div style="flex:1; min-width:220px;">
+                    <label style="color:white; font-weight:bold;">ID</label>
                     <input type="text" id="id_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your ID">
                 </div>
             </div>
@@ -64,12 +62,9 @@ def login_screen():
                 </button>
             </div>
         </div>
-        <script>
-        const loginBtn = window.parent.document.querySelector("#login_btn");
-        </script>
     """, unsafe_allow_html=True)
 
-    # fallback to regular inputs if custom styling doesn't capture
+    # Fallback conventional Streamlit inputs
     name = st.text_input("Enter your Name")
     sid = st.text_input("Enter your ID")
     login_btn = st.button("LOGIN", use_container_width=True)
@@ -81,6 +76,7 @@ def login_screen():
             st.session_state.sid = sid
             st.session_state.page = "Home"
             st.experimental_set_query_params(page="Home")
+            st.success(f"Welcome, {name}!")
             st.experimental_rerun()
         else:
             st.warning("Please enter both name and ID.")
@@ -89,7 +85,6 @@ def login_screen():
 def nav_bar():
     if "page" not in st.session_state:
         st.session_state.page = "Home"
-    # styling bar
     st.markdown("""
         <style>
         .taskbar {
@@ -99,6 +94,7 @@ def nav_bar():
             align-items: center;
             gap: 15px;
             border-radius: 8px;
+            margin-bottom:10px;
         }
         .taskbar .title {
             font-size: 22px;
@@ -128,13 +124,12 @@ def nav_bar():
     cols = st.columns([1, 1, 1, 1, 1])
     with cols[0]:
         st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
-    # buttons
     def nav_button(label, page_key):
         is_active = st.session_state.get("page", "") == page_key
-        style = "active" if is_active else ""
-        if st.button(label, key=label):
+        btn_key = f"nav_{page_key}"
+        if st.button(label, key=btn_key):
             st.session_state.page = page_key
-
+        # visual active indicator via CSS injection (could be enhanced)
     with cols[1]:
         nav_button("Home", "Home")
     with cols[2]:
@@ -143,14 +138,13 @@ def nav_bar():
         nav_button("Dashboard", "Dashboard")
     with cols[4]:
         nav_button("Data Log", "Data Log")
-    # logout separate
+    # Logout
     if st.button("Logout"):
         st.session_state.logged_in = False
-        st.session_state.page = "Emotion Capture"
+        st.session_state.page = "Home"
         st.success("You have been logged out.")
-        st.experimental_set_query_params(page="Emotion Capture")
+        st.experimental_set_query_params(page="Home")
         st.experimental_rerun()
-    # close title div
     st.markdown("</div>", unsafe_allow_html=True)
     return st.session_state.get("page", "Home")
 
@@ -214,7 +208,7 @@ def show_dashboard():
         with c1:
             st.metric("Total Entries", len(df))
         with c2:
-            st.metric("Unique Students", df["ID"].nunique())
+            st.metric("Unique Students", df["ID"].nunique() if "ID" in df.columns else 0)
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Full CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
@@ -285,10 +279,14 @@ if 'page' not in st.session_state:
     st.session_state.page = "Home"
 
 if not st.session_state.logged_in:
-    login_screen()
+    set_plain_bg("background.png")
+    # Always show home with login if not logged in
+    show_home()
+    login_form()
 else:
     set_plain_bg("background.png")
     page = nav_bar()
+    st.markdown(f"<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>", unsafe_allow_html=True)
 
     with st.container():
         if page == "Home":
