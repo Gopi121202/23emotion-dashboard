@@ -50,13 +50,13 @@ def set_plain_bg(image_path):
 def login_form():
     st.markdown("""
         <div style="max-width:600px; margin:40px auto; padding:30px; background:#0f4c75; border-radius:12px; color:white;">
-            <h2 style='text-align: center; margin-bottom:5px;'>🔐 STUDENT LOGIN</h2>
+            <h2 style='text-align: center; margin-bottom:5px;'>🔐 LOGIN</h2>
             <p style='text-align:center; margin-top:0;'>Enter your name and ID to proceed.</p>
         </div>
     """, unsafe_allow_html=True)
     with st.form("student_login_form", clear_on_submit=False):
         name = st.text_input("Name", key="login_name")
-        sid = st.text_input("Student ID", key="login_sid")
+        sid = st.text_input("ID", key="login_sid")
         submitted = st.form_submit_button("LOGIN")
         if submitted:
             if name.strip() and sid.strip():
@@ -65,7 +65,7 @@ def login_form():
                 st.session_state.sid = sid.strip()
                 st.session_state.page = "Home"
                 st.experimental_set_query_params(page="Home")
-                st.success(f"Welcome, {st.session_state.name}!")
+                st.success(f"WELCOME, {st.session_state.name}!")
                 st.experimental_rerun()
             else:
                 st.warning("Please enter both name and ID.")
@@ -137,7 +137,7 @@ def nav_bar():
 
 # Emotion capture
 def detect_emotion():
-    st.subheader("📷 Capture Image")
+    st.subheader("CAPTURE IMAGE")
     col1, col2 = st.columns([1, 2])
 
     with col1:
@@ -199,9 +199,9 @@ def show_dashboard():
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
-        st.markdown("**Emotion Distribution Over All Captures**")
+        st.markdown("Emotion Distribution Over All Captures")
         st.line_chart(emotion_counts)
-        st.markdown("**Summary Statistics**")
+        st.markdown("Summary Statistics")
         c1, c2 = st.columns(2)
         with c1:
             st.metric("Total Entries", len(df))
@@ -214,7 +214,7 @@ def show_dashboard():
 
 # Data log
 def show_log():
-    st.subheader("🧾 Emotion Detection Log")
+    st.subheader("EMOTION DETECTION LOG")
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
         st.dataframe(df.tail(20))
@@ -251,14 +251,14 @@ def show_home():
             top_emotion = emotion_counts.idxmax() if not emotion_counts.empty else "N/A"
             st.metric("Top Emotion", top_emotion)
 
-        st.markdown("**Emotion Distribution**")
+        st.markdown("Emotion Distribution")
         st.bar_chart(emotion_counts)
 
-        st.markdown("**Recent Activity**")
+        st.markdown("Recent Activity")
         st.table(recent)
 
         st.markdown("""
-            <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#e8f6f9;">
+            <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#E29578;">
                 <strong>Faculty Tips:</strong>
                 <ul>
                     <li>Monitor spikes in negative emotions and reach out proactively.</li>
