@@ -231,7 +231,6 @@ def show_dashboard():
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
 
         st.markdown("Emotion Distribution Over All Captures")
-        # Line chart
         st.line_chart(emotion_counts)
 
         st.markdown("Summary Statistics")
@@ -241,7 +240,6 @@ def show_dashboard():
         with c2:
             st.metric("Unique Students", df["ID"].nunique() if "ID" in df.columns else 0)
 
-        # Pie chart with legend to avoid overlapping
         st.markdown("Breakdown by Emotion Percentage")
         total = emotion_counts.sum()
         if total > 0:
@@ -249,18 +247,19 @@ def show_dashboard():
         else:
             percentages = emotion_counts
 
-        fig, ax = plt.subplots()
+        # Smaller pie chart
+        fig, ax = plt.subplots(figsize=(4, 4))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
-            startangle=80,
+            startangle=90,
             pctdistance=0.7,
             labeldistance=1.05,
             wedgeprops={'linewidth': 1, 'edgecolor': 'white'}
         )
         ax.axis('equal')
         legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
-        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1, 0.5))
+        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.05, 0.5), fontsize="small")
         fig.tight_layout()
         st.pyplot(fig)
 
