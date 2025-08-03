@@ -40,46 +40,48 @@ def set_plain_bg(image_path):
             </style>
         """, unsafe_allow_html=True)
 
-# Login form used on Home
+# Login form used on Home (only one)
 def login_form():
     st.markdown("""
         <div style="max-width:700px; margin:auto; padding:30px; background:#0f4c75; border-radius:12px; color:white;">
-            <h2 style='text-align: center; margin-bottom:5px;'>LOGIN</h2>
+            <h2 style='text-align: center; margin-bottom:5px;'>🔐 STUDENT LOGIN</h2>
             <p style='text-align:center; margin-top:0;'>Please enter your details to continue.</p>
-            <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
-                <div style="flex:1; min-width:220px;">
-                    <label style="color:white; font-weight:bold;">Name</label>
-                    <input type="text" id="name_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your Name">
+            <form id="login_form">
+                <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
+                    <div style="flex:1; min-width:220px;">
+                        <label style="color:white; font-weight:bold;">Name</label>
+                        <input name="name" type="text" id="name_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your Name">
+                    </div>
+                    <div style="flex:1; min-width:220px;">
+                        <label style="color:white; font-weight:bold;">Student ID</label>
+                        <input name="sid" type="text" id="id_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your ID">
+                    </div>
                 </div>
-                <div style="flex:1; min-width:220px;">
-                    <label style="color:white; font-weight:bold;">ID</label>
-                    <input type="text" id="id_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your ID">
+                <div style="text-align:center; margin-top:20px;">
+                    <button type="submit" style="background:#00b7c2; color:white; padding:12px 30px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
+                        LOGIN
+                    </button>
                 </div>
-            </div>
-            <div style="text-align:center; margin-top:20px;">
-                <button id="login_btn" style="background:#00b7c2; color:white; padding:12px 30px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                    LOGIN
-                </button>
-            </div>
+            </form>
         </div>
     """, unsafe_allow_html=True)
 
-    # Fallback conventional Streamlit inputs
-    name = st.text_input("Enter your Name")
-    sid = st.text_input("Enter your ID")
-    login_btn = st.button("LOGIN", use_container_width=True)
-
-    if login_btn:
-        if name.strip() and sid.strip():
-            st.session_state.logged_in = True
-            st.session_state.name = name
-            st.session_state.sid = sid
-            st.session_state.page = "Home"
-            st.experimental_set_query_params(page="Home")
-            st.success(f"Welcome, {name}!")
-            st.experimental_rerun()
-        else:
-            st.warning("Please enter both name and ID.")
+    # Actual Streamlit capture of login (wrapped to match the styled box)
+    with st.form("student_login_form", clear_on_submit=False):
+        name = st.text_input("Name", key="login_name")
+        sid = st.text_input("Student ID", key="login_sid")
+        submitted = st.form_submit_button("LOGIN", use_container_width=True)
+        if submitted:
+            if name.strip() and sid.strip():
+                st.session_state.logged_in = True
+                st.session_state.name = name
+                st.session_state.sid = sid
+                st.session_state.page = "Home"
+                st.experimental_set_query_params(page="Home")
+                st.success(f"Welcome, {name}!")
+                st.experimental_rerun()
+            else:
+                st.warning("Please enter both name and ID.")
 
 # Navigation bar with Home
 def nav_bar():
@@ -125,11 +127,9 @@ def nav_bar():
     with cols[0]:
         st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
     def nav_button(label, page_key):
-        is_active = st.session_state.get("page", "") == page_key
-        btn_key = f"nav_{page_key}"
-        if st.button(label, key=btn_key):
+        if st.button(label, key=f"nav_{page_key}"):
             st.session_state.page = page_key
-        # visual active indicator via CSS injection (could be enhanced)
+
     with cols[1]:
         nav_button("Home", "Home")
     with cols[2]:
@@ -138,7 +138,6 @@ def nav_bar():
         nav_button("Dashboard", "Dashboard")
     with cols[4]:
         nav_button("Data Log", "Data Log")
-    # Logout
     if st.button("Logout"):
         st.session_state.logged_in = False
         st.session_state.page = "Home"
@@ -280,7 +279,7 @@ if 'page' not in st.session_state:
 
 if not st.session_state.logged_in:
     set_plain_bg("background.png")
-    # Always show home with login if not logged in
+    # Show home and login only
     show_home()
     login_form()
 else:
