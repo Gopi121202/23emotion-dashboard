@@ -141,14 +141,11 @@ def nav_bar():
         st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
 
     def make_btn(label, page_key, col):
+        is_active = st.session_state.get("page", "") == page_key
         with col:
-            is_active = st.session_state.get("page", "") == page_key
             btn = st.button(label, key=f"nav_{page_key}")
             if btn:
                 st.session_state.page = page_key
-            # Visual active indicator
-            if is_active:
-                st.markdown(f"<style>.taskbar button#{'nav_' + page_key} {{ background: #00b7c2; }}</style>", unsafe_allow_html=True)
 
     make_btn("Home", "Home", cols[1])
     make_btn("Emotion Capture", "Emotion Capture", cols[2])
@@ -248,18 +245,18 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(4, 4))
+        fig, ax = plt.subplots(figsize=(3, 3))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
             startangle=90,
-            pctdistance=0.7,
-            labeldistance=1.05,
-            wedgeprops={'linewidth': 1, 'edgecolor': 'white'}
+            pctdistance=0.65,
+            labeldistance=1.0,
+            wedgeprops={'linewidth': 0.5, 'edgecolor': 'white'}
         )
         ax.axis('equal')
         legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
-        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.05, 0.5), fontsize="small")
+        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=False)
         fig.tight_layout()
         st.pyplot(fig)
 
