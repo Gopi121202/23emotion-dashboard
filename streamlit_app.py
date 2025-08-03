@@ -1,5 +1,3 @@
-# Final Streamlit App with All UI Enhancements
-
 import streamlit as st
 import cv2
 import numpy as np
@@ -10,15 +8,23 @@ from tensorflow.keras.models import load_model
 import os
 import base64
 
-# Configuration
 st.set_page_config(layout="wide")
 
-# Load model and face cascade
-model = load_model("model/model.keras")
-face_cascade = cv2.CascadeClassifier("haarcascade.xml")
-emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
-log_path = "data/emotion_log.csv"
+# Paths and setup
+MODEL_PATH = "model/model.keras"
+CASCADE_PATH = "haarcascade.xml"
+LOG_PATH = "data/emotion_log.csv"
 os.makedirs("data", exist_ok=True)
+
+# Load model and cascade
+try:
+    model = load_model(MODEL_PATH)
+except Exception as e:
+    st.error(f"Failed to load model: {e}")
+    st.stop()
+
+face_cascade = cv2.CascadeClassifier(CASCADE_PATH)
+emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
 
 # Background setter
 def set_plain_bg(image_path):
@@ -40,66 +46,48 @@ def set_plain_bg(image_path):
             </style>
         """, unsafe_allow_html=True)
 
-# Login form used on Home (only one)
+# Login form
 def login_form():
     st.markdown("""
-        <div style="max-width:700px; margin:auto; padding:30px; background:#0f4c75; border-radius:12px; color:white;">
+        <div style="max-width:600px; margin:40px auto; padding:30px; background:#0f4c75; border-radius:12px; color:white;">
             <h2 style='text-align: center; margin-bottom:5px;'>🔐 STUDENT LOGIN</h2>
-            <p style='text-align:center; margin-top:0;'>Please enter your details to continue.</p>
-            <form id="login_form">
-                <div style="display:flex; gap:20px; flex-wrap:wrap; justify-content:center;">
-                    <div style="flex:1; min-width:220px;">
-                        <label style="color:white; font-weight:bold;">Name</label>
-                        <input name="name" type="text" id="name_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your Name">
-                    </div>
-                    <div style="flex:1; min-width:220px;">
-                        <label style="color:white; font-weight:bold;">Student ID</label>
-                        <input name="sid" type="text" id="id_input" style="width:100%; padding:8px; border-radius:6px; border:none;" placeholder="Enter your ID">
-                    </div>
-                </div>
-                <div style="text-align:center; margin-top:20px;">
-                    <button type="submit" style="background:#00b7c2; color:white; padding:12px 30px; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">
-                        LOGIN
-                    </button>
-                </div>
-            </form>
+            <p style='text-align:center; margin-top:0;'>Enter your name and ID to proceed.</p>
         </div>
     """, unsafe_allow_html=True)
-
-    # Actual Streamlit capture of login (wrapped to match the styled box)
     with st.form("student_login_form", clear_on_submit=False):
         name = st.text_input("Name", key="login_name")
         sid = st.text_input("Student ID", key="login_sid")
-        submitted = st.form_submit_button("LOGIN", use_container_width=True)
+        submitted = st.form_submit_button("LOGIN")
         if submitted:
             if name.strip() and sid.strip():
                 st.session_state.logged_in = True
-                st.session_state.name = name
-                st.session_state.sid = sid
+                st.session_state.name = name.strip()
+                st.session_state.sid = sid.strip()
                 st.session_state.page = "Home"
                 st.experimental_set_query_params(page="Home")
-                st.success(f"Welcome, {name}!")
+                st.success(f"Welcome, {st.session_state.name}!")
                 st.experimental_rerun()
             else:
                 st.warning("Please enter both name and ID.")
 
-# Navigation bar with Home
+# Navigation bar
 def nav_bar():
     if "page" not in st.session_state:
         st.session_state.page = "Home"
+
     st.markdown("""
         <style>
         .taskbar {
             background-color: #006d77;
-            padding: 8px 20px;
+            padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             border-radius: 8px;
             margin-bottom:10px;
         }
         .taskbar .title {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: bold;
             color: white;
             margin-right: auto;
@@ -108,53 +96,51 @@ def nav_bar():
             background: transparent;
             border: none;
             color: white;
-            padding: 10px 16px;
+            padding: 8px 14px;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
             border-radius: 6px;
         }
+        .taskbar button.active {
+            background: #00b7c2;
+        }
         .taskbar button:hover {
             background: #014f57;
-        }
-        .active {
-            background: #00b7c2;
         }
         </style>
     """, unsafe_allow_html=True)
 
-    cols = st.columns([1, 1, 1, 1, 1])
+    cols = st.columns([1, 0.7, 0.7, 0.7, 0.7, 0.7])
     with cols[0]:
         st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
-    def nav_button(label, page_key):
-        if st.button(label, key=f"nav_{page_key}"):
-            st.session_state.page = page_key
 
-    with cols[1]:
-        nav_button("Home", "Home")
-    with cols[2]:
-        nav_button("Emotion Capture", "Emotion Capture")
-    with cols[3]:
-        nav_button("Dashboard", "Dashboard")
-    with cols[4]:
-        nav_button("Data Log", "Data Log")
-    if st.button("Logout"):
-        st.session_state.logged_in = False
-        st.session_state.page = "Home"
-        st.success("You have been logged out.")
-        st.experimental_set_query_params(page="Home")
-        st.experimental_rerun()
+    def make_btn(label, page_key, col):
+        is_active = st.session_state.get("page", "") == page_key
+        with col:
+            if st.button(label, key=f"nav_{page_key}"):
+                st.session_state.page = page_key
+    make_btn("Home", "Home", cols[1])
+    make_btn("Emotion Capture", "Emotion Capture", cols[2])
+    make_btn("Dashboard", "Dashboard", cols[3])
+    make_btn("Data Log", "Data Log", cols[4])
+    with cols[5]:
+        if st.button("Logout"):
+            st.session_state.logged_in = False
+            st.session_state.page = "Home"
+            st.experimental_set_query_params(page="Home")
+            st.success("You have been logged out.")
+            st.experimental_rerun()
     st.markdown("</div>", unsafe_allow_html=True)
     return st.session_state.get("page", "Home")
 
-# Emotion Detection
+# Emotion capture
 def detect_emotion():
     st.subheader("📷 Capture Image")
     col1, col2 = st.columns([1, 2])
 
     with col1:
         image = st.camera_input("Take a picture")
-
     with col2:
         if image:
             img = Image.open(image)
@@ -162,6 +148,7 @@ def detect_emotion():
             gray = cv2.cvtColor(img_np, cv2.COLOR_RGB2GRAY)
             faces = face_cascade.detectMultiScale(gray, 1.1, 5)
 
+            detected_emotion = None
             for (x, y, w, h) in faces:
                 roi = gray[y:y+h, x:x+w]
                 roi = cv2.resize(roi, (48, 48)) / 255.0
@@ -169,8 +156,9 @@ def detect_emotion():
 
                 pred = model.predict(roi)
                 emotion = emotion_labels[np.argmax(pred)]
+                detected_emotion = emotion
 
-                # Log the emotion
+                # Log
                 log_entry = {
                     "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                     "Name": st.session_state.name,
@@ -178,14 +166,25 @@ def detect_emotion():
                     "Emotion": emotion
                 }
                 log_df = pd.DataFrame([log_entry])
-                if os.path.exists(log_path):
-                    log_df.to_csv(log_path, mode='a', header=False, index=False)
+                if os.path.exists(LOG_PATH):
+                    log_df.to_csv(LOG_PATH, mode='a', header=False, index=False)
                 else:
-                    log_df.to_csv(log_path, mode='w', header=True, index=False)
+                    log_df.to_csv(LOG_PATH, mode='w', header=True, index=False)
 
-                st.image(img_np, use_column_width=True)
+            st.image(img_np, use_column_width=True)
+            if detected_emotion:
+                # alert for negative emotions
+                if detected_emotion in ["Angry", "Sad", "Disgust"]:
+                    st.markdown(f"""
+                        <div style="background:#ffcccc; padding:15px; border-radius:8px; margin:10px 0;">
+                            <strong style="color:#a80000;">ALERT:</strong> Detected emotion is <strong>{detected_emotion.upper()}</strong>. Consider intervention. 
+                        </div>
+                    """, unsafe_allow_html=True)
                 st.markdown(f"""
-                    <h1 style='text-align:center; color:red; animation: popIn 1s ease-in-out;'>DETECTED EMOTION: {emotion.upper()}</h1>
+                    <div style="text-align:center;">
+                        <h1 style='color:#d62828; animation: popIn 1s ease-in-out; margin:0;'>DETECTED EMOTION:</h1>
+                        <h2 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:48px; margin:5px;'>{detected_emotion.upper()}</h2>
+                    </div>
                     <style>
                     @keyframes popIn {{
                         0% {{ transform: scale(0.8); opacity: 0; }}
@@ -194,11 +193,11 @@ def detect_emotion():
                     </style>
                 """, unsafe_allow_html=True)
 
-# Dashboard page
+# Dashboard
 def show_dashboard():
     st.subheader("📊 Emotion Trend Dashboard")
-    if os.path.exists(log_path):
-        df = pd.read_csv(log_path)
+    if os.path.exists(LOG_PATH):
+        df = pd.read_csv(LOG_PATH)
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
         st.markdown("**Emotion Distribution Over All Captures**")
         st.line_chart(emotion_counts)
@@ -211,20 +210,20 @@ def show_dashboard():
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Full CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
-        st.info("No emotion data available to display.")
+        st.info("No data yet. Capture emotions first.")
 
-# Data Log page
+# Data log
 def show_log():
     st.subheader("🧾 Emotion Detection Log")
-    if os.path.exists(log_path):
-        df = pd.read_csv(log_path)
+    if os.path.exists(LOG_PATH):
+        df = pd.read_csv(LOG_PATH)
         st.dataframe(df.tail(20))
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
         st.info("No logs found.")
 
-# Home page
+# Home
 def show_home():
     st.markdown("""
         <div style="background: rgba(255,255,255,0.9); padding:25px; border-radius:12px; max-width:1000px; margin:auto;">
@@ -236,8 +235,8 @@ def show_home():
     """, unsafe_allow_html=True)
 
     st.markdown("### Quick Overview")
-    if os.path.exists(log_path):
-        df = pd.read_csv(log_path)
+    if os.path.exists(LOG_PATH):
+        df = pd.read_csv(LOG_PATH)
         total_entries = len(df)
         unique_students = df["ID"].nunique() if "ID" in df.columns else 0
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
@@ -271,28 +270,25 @@ def show_home():
     else:
         st.info("No data captured yet. Go to Emotion Capture to begin.")
 
-# Main routing logic
+# Main
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
 if 'page' not in st.session_state:
     st.session_state.page = "Home"
 
+set_plain_bg("background.png")
+
 if not st.session_state.logged_in:
-    set_plain_bg("background.png")
-    # Show home and login only
     show_home()
     login_form()
 else:
-    set_plain_bg("background.png")
-    page = nav_bar()
+    current = nav_bar()
     st.markdown(f"<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>", unsafe_allow_html=True)
-
-    with st.container():
-        if page == "Home":
-            show_home()
-        elif page == "Emotion Capture":
-            detect_emotion()
-        elif page == "Dashboard":
-            show_dashboard()
-        elif page == "Data Log":
-            show_log()
+    if current == "Home":
+        show_home()
+    elif current == "Emotion Capture":
+        detect_emotion()
+    elif current == "Dashboard":
+        show_dashboard()
+    elif current == "Data Log":
+        show_log()
