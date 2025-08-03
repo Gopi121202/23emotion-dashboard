@@ -245,7 +245,7 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(5, 4))
+        fig, ax = plt.subplots(figsize=(5, 5))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
