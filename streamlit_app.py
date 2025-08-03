@@ -258,7 +258,7 @@ def show_home():
         st.table(recent)
 
         st.markdown("""
-            <div style="border:1px solid #006d77; padding:12px; border-radius:8px; background:#e8f6f9;">
+            <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#e8f6f9;">
                 <strong>Faculty Tips:</strong>
                 <ul>
                     <li>Monitor spikes in negative emotions and reach out proactively.</li>
