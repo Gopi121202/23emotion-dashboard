@@ -120,6 +120,7 @@ def nav_bar():
         with col:
             if st.button(label, key=f"nav_{page_key}"):
                 st.session_state.page = page_key
+
     make_btn("Home", "Home", cols[1])
     make_btn("Emotion Capture", "Emotion Capture", cols[2])
     make_btn("Dashboard", "Dashboard", cols[3])
@@ -173,7 +174,6 @@ def detect_emotion():
 
             st.image(img_np, use_column_width=True)
             if detected_emotion:
-                # alert for negative emotions
                 if detected_emotion in ["Angry", "Sad", "Disgust"]:
                     st.markdown(f"""
                         <div style="background:#ffcccc; padding:15px; border-radius:8px; margin:10px 0;">
@@ -223,7 +223,7 @@ def show_log():
     else:
         st.info("No logs found.")
 
-# Home
+# Home (with overview)
 def show_home():
     st.markdown("""
         <div style="background: rgba(255,255,255,0.9); padding:25px; border-radius:12px; max-width:1000px; margin:auto;">
@@ -270,6 +270,17 @@ def show_home():
     else:
         st.info("No data captured yet. Go to Emotion Capture to begin.")
 
+# Home basic (no overview) for pre-login
+def show_home_basic():
+    st.markdown("""
+        <div style="background: rgba(255,255,255,0.9); padding:25px; border-radius:12px; max-width:1000px; margin:auto;">
+            <h1 style="color:#006d77; text-align:center; margin:5px;">WELCOME TO VIRTUAL EMODASH</h1>
+            <p style="text-align:center; font-size:14px; margin-top:0;">
+                Real-time emotion-aware learning monitoring system for improving engagement and teaching effectiveness.
+            </p>
+        </div>
+    """, unsafe_allow_html=True)
+
 # Main
 if 'logged_in' not in st.session_state:
     st.session_state.logged_in = False
@@ -279,7 +290,7 @@ if 'page' not in st.session_state:
 set_plain_bg("background.png")
 
 if not st.session_state.logged_in:
-    show_home()
+    show_home_basic()
     login_form()
 else:
     current = nav_bar()
