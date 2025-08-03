@@ -25,6 +25,7 @@ except Exception as e:
 
 face_cascade = cv2.CascadeClassifier(CASCADE_PATH)
 emotion_labels = ['Angry', 'Disgust', 'Fear', 'Happy', 'Neutral', 'Sad', 'Surprise']
+alert_emotions = {"Angry", "Sad", "Fear"}
 
 # Background setter
 def set_plain_bg(image_path):
@@ -45,6 +46,30 @@ def set_plain_bg(image_path):
             .stApp { background: #e8f6f9; }
             </style>
         """, unsafe_allow_html=True)
+
+# JavaScript alert sound + animation trigger
+def play_alert_script():
+    st.markdown("""
+        <script>
+        // simple pop sound via Web Audio API
+        (function() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const o = ctx.createOscillator();
+                const g = ctx.createGain();
+                o.type = 'square';
+                o.frequency.setValueAtTime(600, ctx.currentTime);
+                g.gain.setValueAtTime(0.1, ctx.currentTime);
+                o.connect(g);
+                g.connect(ctx.destination);
+                o.start();
+                setTimeout(() => { o.stop(); }, 120);
+            } catch(e) {
+                console.log("Audio API unavailable", e);
+            }
+        })();
+        </script>
+    """, unsafe_allow_html=True)
 
 # Login form
 def login_form():
@@ -116,7 +141,7 @@ def nav_bar():
         st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
 
     def make_btn(label, page_key, col):
-        is_active = st.session_state.get("page", "") == page_key
+        active = "active" if st.session_state.get("page", "") == page_key else ""
         with col:
             if st.button(label, key=f"nav_{page_key}"):
                 st.session_state.page = page_key
@@ -174,9 +199,11 @@ def detect_emotion():
 
             st.image(img_np, use_column_width=True)
             if detected_emotion:
-                if detected_emotion in ["Angry", "Sad", "Disgust"]:
+                if detected_emotion in alert_emotions:
+                    # play sound
+                    play_alert_script()
                     st.markdown(f"""
-                        <div style="background:#ffcccc; padding:15px; border-radius:8px; margin:10px 0;">
+                        <div style="background:#ffe6e6; padding:15px; border-radius:8px; margin:10px 0; border:2px solid #d62828;">
                             <strong style="color:#a80000;">ALERT:</strong> Detected emotion is <strong>{detected_emotion.upper()}</strong>. Consider intervention. 
                         </div>
                     """, unsafe_allow_html=True)
@@ -242,14 +269,24 @@ def show_home():
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
         recent = df.tail(5)
 
+        # check top emotion alert
+        top_emotion = emotion_counts.idxmax() if not emotion_counts.empty else None
+        if top_emotion in alert_emotions:
+            play_alert_script()
+            st.markdown(f"""
+                <div style="background:#ffe6e6; padding:15px; border-radius:8px; margin:10px 0; border:2px solid #d62828;">
+                    <strong style="color:#a80000;">ALERT:</strong> Top emotion is <strong>{top_emotion.upper()}</strong>. Immediate attention suggested.
+                </div>
+            """, unsafe_allow_html=True)
+
         c1, c2, c3 = st.columns(3)
         with c1:
             st.metric("Total Captures", total_entries)
         with c2:
             st.metric("Unique Students", unique_students)
         with c3:
-            top_emotion = emotion_counts.idxmax() if not emotion_counts.empty else "N/A"
-            st.metric("Top Emotion", top_emotion)
+            top_em = top_emotion if top_emotion else "N/A"
+            st.metric("Top Emotion", top_em.upper())
 
         st.markdown("Emotion Distribution")
         st.bar_chart(emotion_counts)
@@ -259,11 +296,11 @@ def show_home():
 
         st.markdown("""
             <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#E29578;">
-                <strong>Faculty Tips:</strong>
+                <strong style="color:white;">Faculty Tips:</strong>
                 <ul>
-                    <li>Monitor spikes in negative emotions and reach out proactively.</li>
-                    <li>Use trend data to adjust pacing or offer breaks.</li>
-                    <li>Provide positive reinforcement when neutral/happy trends dominate.</li>
+                    <li style="color:white;">Monitor spikes in negative emotions and reach out proactively.</li>
+                    <li style="color:white;">Use trend data to adjust pacing or offer breaks.</li>
+                    <li style="color:white;">Provide positive reinforcement when neutral/happy trends dominate.</li>
                 </ul>
             </div>
         """, unsafe_allow_html=True)
