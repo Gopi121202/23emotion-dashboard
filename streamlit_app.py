@@ -245,14 +245,14 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(3, 3))
+        fig, ax = plt.subplots(figsize=(4, 4))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
             startangle=90,
             pctdistance=0.65,
             labeldistance=1.0,
-            wedgeprops={'linewidth': 0.5, 'edgecolor': 'white'}
+            wedgeprops={'linewidth': 0.5, 'edgecolor': 'black'}
         )
         ax.axis('equal')
         legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
