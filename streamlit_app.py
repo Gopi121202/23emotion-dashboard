@@ -230,14 +230,14 @@ def show_dashboard():
         st.markdown("Emotion Distribution Over All Captures")
         st.line_chart(emotion_counts)
 
-        st.markdown("Summary Statistics")
+        st.markdown("SUMMARY STATISTICS")
         c1, c2 = st.columns(2)
         with c1:
             st.metric("Total Entries", len(df))
         with c2:
             st.metric("Unique Students", df["ID"].nunique() if "ID" in df.columns else 0)
 
-        st.markdown("Breakdown by Emotion Percentage")
+        st.markdown("BREAKDOWN BY EMOTION PERCENTAGE")
         total = emotion_counts.sum()
         if total > 0:
             percentages = (emotion_counts / total * 100).round(1)
@@ -245,7 +245,7 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(5, 4))
+        fig, ax = plt.subplots(figsize=(3, 3))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
