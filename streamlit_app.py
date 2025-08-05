@@ -138,7 +138,7 @@ def nav_bar():
 
     cols = st.columns([1, 0.7, 0.7, 0.7, 0.7, 0.7])
     with cols[0]:
-        st.markdown("<div class='taskbar'><div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
+        st.markdown("<div class='taskbar'><div class='title'>🎓VIRTUAL EMODASH</div>", unsafe_allow_html=True)
 
     def make_btn(label, page_key, col):
         is_active = st.session_state.get("page", "") == page_key
@@ -204,13 +204,13 @@ def detect_emotion():
                     play_alert_script()
                     st.markdown(f"""
                         <div style="background:#ffe6e6; padding:15px; border-radius:8px; margin:10px 0; border:2px solid #d62828;">
-                            <strong style="color:#a80000;">ALERT:</strong> Detected emotion is <strong>{detected_emotion.upper()}</strong>. Consider intervention. 
+                            <strong style="color:#a80000;">ALERT: Detected emotion is <strong>{detected_emotion.upper()}</strong>. Consider intervention.</strong> 
                         </div>
                     """, unsafe_allow_html=True)
                 st.markdown(f"""
                     <div style="text-align:center;">
-                        <h1 style='color:#d62828; animation: popIn 1s ease-in-out; margin:0;'>DETECTED EMOTION:</h1>
-                        <h2 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:48px; margin:5px;'>{detected_emotion.upper()}</h2>
+                        <h1 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:50px margin:0;'>DETECTED EMOTION:</h1>
+                        <h2 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:50px; margin:5px;'>{detected_emotion.upper()}</h2>
                     </div>
                     <style>
                     @keyframes popIn {{
@@ -222,7 +222,7 @@ def detect_emotion():
 
 # Dashboard
 def show_dashboard():
-    st.subheader("📊 Emotion Trend Dashboard")
+    st.subheader("📊 EMOTION TREND DASHBOARD")
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
@@ -256,7 +256,7 @@ def show_dashboard():
         )
         ax.axis('equal')
         legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
-        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=False)
+        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=True)
         st.pyplot(fig)
 
         csv = df.to_csv(index=False).encode('utf-8')
@@ -269,7 +269,7 @@ def show_log():
     st.subheader("EMOTION DETECTION LOG")
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
-        st.dataframe(df.tail(100))
+        st.dataframe(df.tail(200))
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
@@ -292,7 +292,7 @@ def show_home():
         total_entries = len(df)
         unique_students = df["ID"].nunique() if "ID" in df.columns else 0
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
-        recent = df.tail(5)
+        recent = df.tail(20)
 
         # check top emotion alert
         top_emotion = emotion_counts.idxmax() if not emotion_counts.empty else None
@@ -337,7 +337,7 @@ def show_home_basic():
     st.markdown("""
         <div style="background: rgba(255,255,255,0.9); padding:25px; border-radius:12px; max-width:1000px; margin:auto;">
             <h1 style="color:#006d77; text-align:center; margin:5px;">WELCOME TO VIRTUAL EMODASH</h1>
-            <p style="text-align:center; font-size:14px; margin-top:0;">
+            <p style="color:#006d77;  text-align:center; font-size:14px; margin-top:0;">
                 Real-time emotion-aware learning monitoring system for improving engagement and teaching effectiveness.
             </p>
         </div>
@@ -356,7 +356,7 @@ if not st.session_state.logged_in:
     login_form()
 else:
     current = nav_bar()
-    st.markdown(f"<h3 style='text-align:center; color:#006d77;'>👋 Welcome, {st.session_state.name}!</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align:center; color:#006d77;'>👋 WELCOME, {st.session_state.name}!</h3>", unsafe_allow_html=True)
     if current == "Home":
         show_home()
     elif current == "Emotion Capture":
