@@ -356,7 +356,7 @@ if not st.session_state.logged_in:
     login_form()
 else:
     current = nav_bar()
-    st.markdown(f"<h3 style='text-align:center; color:#006d77;'>👋 WELCOME, {st.session_state.name}!</h3>", unsafe_allow_html=True)
+    st.markdown(f"<h3 style='text-align:center; color:black;'>👋 WELCOME, {st.session_state.name}!</h3>", unsafe_allow_html=True)
     if current == "Home":
         show_home()
     elif current == "Emotion Capture":
