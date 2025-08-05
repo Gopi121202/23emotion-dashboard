@@ -245,7 +245,7 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(4, 4))
+        fig, ax = plt.subplots(figsize=(5, 5))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
@@ -269,7 +269,7 @@ def show_log():
     st.subheader("EMOTION DETECTION LOG")
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
-        st.dataframe(df.tail(200))
+        st.dataframe(df.tail(150))
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
@@ -292,7 +292,7 @@ def show_home():
         total_entries = len(df)
         unique_students = df["ID"].nunique() if "ID" in df.columns else 0
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
-        recent = df.tail(20)
+        recent = df.tail(10)
 
         # check top emotion alert
         top_emotion = emotion_counts.idxmax() if not emotion_counts.empty else None
