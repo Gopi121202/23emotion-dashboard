@@ -317,8 +317,8 @@ def show_home():
         st.bar_chart(emotion_counts)
 
         st.markdown("""
-        <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#E29578;">
-                <strong style="color:white; text-align:center;">Recent Activity:</strong>
+        <div style="border:1px solid #E29578; padding:6px; border-radius:8px; background:#E29578;">
+                <strong style="color:white;">Recent Activity:</strong>
             </div>
         """, unsafe_allow_html=True)
         st.table(recent)
