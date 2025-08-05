@@ -227,7 +227,7 @@ def show_dashboard():
         df = pd.read_csv(LOG_PATH)
         emotion_counts = df['Emotion'].value_counts().reindex(emotion_labels, fill_value=0)
 
-        st.markdown("Emotion Distribution Over All Captures")
+        st.markdown("EMOTION DISTRIBUTION OVER ALL CAPTURES")
         st.line_chart(emotion_counts)
 
         st.markdown("SUMMARY STATISTICS")
@@ -245,7 +245,7 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(3, 4))
+        fig, ax = plt.subplots(figsize=(2, 2))
         wedges, texts, autotexts = ax.pie(
             emotion_counts.values,
             autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
