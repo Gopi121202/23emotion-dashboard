@@ -269,7 +269,7 @@ def show_log():
     st.subheader("EMOTION DETECTION LOG")
     if os.path.exists(LOG_PATH):
         df = pd.read_csv(LOG_PATH)
-        st.dataframe(df.tail(20))
+        st.dataframe(df.tail(100))
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
