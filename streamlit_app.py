@@ -279,8 +279,8 @@ def show_log():
 def show_home():
     st.markdown("""
         <div style="background: rgba(255,255,255,0.9); padding:25px; border-radius:12px; max-width:1000px; margin:auto;">
-            <h1 style="color:#E29578; text-align:center; margin:5px;">WELCOME TO VIRTUAL EMODASH</h1>
-            <p style="color:#E29578; text-align:center; font-size:14px; margin-top:0;">
+            <h1 style="color:#006d77; text-align:center; margin:5px;">WELCOME TO VIRTUAL EMODASH</h1>
+            <p style="color:#006d77; text-align:center; font-size:14px; margin-top:0;">
                 Real-time emotion-aware learning monitoring system for improving engagement and teaching effectiveness.
             </p>
         </div>
@@ -317,14 +317,14 @@ def show_home():
         st.bar_chart(emotion_counts)
 
         st.markdown("""
-        <div style="border:1px solid #E29578; padding:6px; border-radius:8px; background:#E29578;">
+        <div style="border:1px solid #E29578; padding:6px; border-radius:8px; background:#006d77;">
                 <strong style="color:white;">Recent Activity:</strong>
             </div>
         """, unsafe_allow_html=True)
         st.table(recent)
 
         st.markdown("""
-            <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#E29578;">
+            <div style="border:1px solid #E29578; padding:12px; border-radius:8px; background:#006d77;">
                 <strong style="color:white;">Faculty Tips:</strong>
                 <ul>
                     <li style="color:white;">Monitor spikes in negative emotions and reach out proactively.</li>
