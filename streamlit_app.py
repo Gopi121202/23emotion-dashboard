@@ -187,10 +187,10 @@ def detect_emotion():
 
                 # Log
                 log_entry = {
-                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "Name": st.session_state.name,
+                    "TIMESTAMP": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "NAME": st.session_state.name,
                     "ID": st.session_state.sid,
-                    "Emotion": emotion
+                    "EMOTION": emotion
                 }
                 log_df = pd.DataFrame([log_entry])
                 if os.path.exists(LOG_PATH):
@@ -210,7 +210,7 @@ def detect_emotion():
                 st.markdown(f"""
                     <div style="text-align:center;">
                         <h1 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:50px margin:0;'>DETECTED EMOTION:</h1>
-                        <h2 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:50px; margin:5px;'>{detected_emotion.upper()}</h2>
+                        <h2 style='color:#d62828; animation: popIn 1s ease-in-out; font-size:50px; margin:5px;'><strong>{detected_emotion.upper()}</strong></h2>
                     </div>
                     <style>
                     @keyframes popIn {{
