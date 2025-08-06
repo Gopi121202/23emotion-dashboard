@@ -187,10 +187,10 @@ def detect_emotion():
 
                 # Log
                 log_entry = {
-                    "TIMESTAMP": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "NAME": st.session_state.name,
+                    "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "Name": st.session_state.name,
                     "ID": st.session_state.sid,
-                    "EMOTION": emotion
+                    "Emotion": emotion
                 }
                 log_df = pd.DataFrame([log_entry])
                 if os.path.exists(LOG_PATH):
