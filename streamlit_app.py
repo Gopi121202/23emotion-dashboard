@@ -136,7 +136,7 @@ def nav_bar():
         </style>
     """, unsafe_allow_html=True)
 
-    cols = st.columns([1, 0.7, 0.7, 0.7, 0.7, 0.7])
+    cols = st.columns([1, 0.5, 0.5, 0.5, 0.5, 0.5])
     with cols[0]:
         st.markdown("<div class='taskbar'><div class='title'>🎓VIRTUAL EMODASH</div>", unsafe_allow_html=True)
 
@@ -148,7 +148,7 @@ def nav_bar():
                 st.session_state.page = page_key
 
     make_btn("Home", "Home", cols[1])
-    make_btn("Emotion Capture", "Emotion Capture", cols[1])
+    make_btn("Emotion Capture", "Emotion Capture", cols[2])
     make_btn("Dashboard", "Dashboard", cols[3])
     make_btn("Data Log", "Data Log", cols[4])
     with cols[5]:
