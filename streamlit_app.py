@@ -244,21 +244,25 @@ def show_dashboard():
         else:
             percentages = emotion_counts
 
-        # Smaller pie chart
-        fig, ax = plt.subplots(figsize=(3.5, 3.5))
-        wedges, texts, autotexts = ax.pie(
-            emotion_counts.values,
-            autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
-            startangle=90,
-            pctdistance=0.65,
-            labeldistance=1.0,
-            wedgeprops={'linewidth': 0.5, 'edgecolor': 'black'}
-        )
-        ax.axis('equal')
-        legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
-        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=False)
-        st.pyplot(fig)
+        # Smaller centered pie chart
+    st.markdown("<h4 style='text-align:center;'>Breakdown by Emotion Percentage</h4>", unsafe_allow_html=True)
 
+    fig, ax = plt.subplots(figsize=(3.5, 3.5))  # smaller size
+    labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index]
+    wedges, texts, autotexts = ax.pie(
+        emotion_counts.values,
+        labels=None,
+        autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
+        startangle=90,
+        pctdistance=0.7,
+        labeldistance=1.1,
+        wedgeprops={'linewidth': 0.5, 'edgecolor': 'black'}
+    )
+    ax.axis('equal')
+    c1, c2, c3 = st.columns([1, 2, 1])
+    with c2:
+        ax.legend(wedges, labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="small", frameon=True)
+        st.pyplot(fig)
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Full CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
     else:
