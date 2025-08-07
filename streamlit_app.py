@@ -107,7 +107,7 @@ def nav_bar():
             padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 10px;
             border-radius: 8px;
             margin-bottom:10px;
         }
@@ -148,7 +148,7 @@ def nav_bar():
                 st.session_state.page = page_key
 
     make_btn("Home", "Home", cols[1])
-    make_btn("Emotion Capture", "Emotion Capture", cols[2])
+    make_btn("Emotion Capture", "Emotion Capture", cols[1])
     make_btn("Dashboard", "Dashboard", cols[3])
     make_btn("Data Log", "Data Log", cols[4])
     with cols[5]:
