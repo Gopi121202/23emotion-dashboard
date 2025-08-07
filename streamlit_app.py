@@ -107,7 +107,7 @@ def nav_bar():
             padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
             border-radius: 8px;
             margin-bottom:10px;
         }
