@@ -95,7 +95,6 @@ def login_form():
             else:
                 st.warning("Please enter both name and ID.")
 
-# Navigation bar
 def nav_bar():
     if "page" not in st.session_state:
         st.session_state.page = "Home"
@@ -104,28 +103,32 @@ def nav_bar():
         <style>
         .taskbar {
             background-color: #006d77;
-            padding: 8px 16px;
+            padding: 10px 25px;
             display: flex;
+            justify-content: center;
             align-items: center;
-            gap: 8px;
-            border-radius: 8px;
-            margin-bottom:10px;
+            gap: 35px; /* Increased gap */
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .taskbar .title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: white;
-            margin-right: auto;
+            margin-right: 30px;
+            white-space: nowrap;
         }
         .taskbar button {
-            background: transparent;
+            background: #1c1c1c;
             border: none;
             color: white;
-            padding: 8px 14px;
+            padding: 10px 20px;
             font-weight: bold;
             text-transform: uppercase;
             cursor: pointer;
-            border-radius: 6px;
+            border-radius: 8px;
+            transition: 0.3s ease;
         }
         .taskbar button.active {
             background: #00b7c2;
@@ -136,31 +139,33 @@ def nav_bar():
         </style>
     """, unsafe_allow_html=True)
 
-    cols = st.columns([1, 0.7, 0.7, 0.7, 0.7, 0.7])
-    with cols[0]:
-        st.markdown("<div class='taskbar'><div class='title'>🎓VIRTUAL EMODASH</div>", unsafe_allow_html=True)
+    st.markdown("<div class='taskbar'>", unsafe_allow_html=True)
 
-    def make_btn(label, page_key, col):
+    # Title
+    st.markdown("<div class='title'>🎓 VIRTUAL EMODASH</div>", unsafe_allow_html=True)
+
+    # Buttons
+    def make_btn(label, page_key):
         is_active = st.session_state.get("page", "") == page_key
-        with col:
-            btn = st.button(label, key=f"nav_{page_key}")
-            if btn:
-                st.session_state.page = page_key
+        btn_class = "active" if is_active else ""
+        if st.button(label, key=f"nav_{page_key}"):
+            st.session_state.page = page_key
 
-    make_btn("Home", "Home", cols[1])
-    make_btn("Emotion Capture", "Emotion Capture", cols[2])
-    make_btn("Dashboard", "Dashboard", cols[3])
-    make_btn("Data Log", "Data Log", cols[4])
-    with cols[5]:
-        if st.button("Logout"):
-            st.session_state.logged_in = False
-            st.session_state.page = "Home"
-            st.experimental_set_query_params(page="Home")
-            st.success("You have been logged out.")
-            st.experimental_rerun()
+    make_btn("Home", "Home")
+    make_btn("Emotion Capture", "Emotion Capture")
+    make_btn("Dashboard", "Dashboard")
+    make_btn("Data Log", "Data Log")
+    
+    if st.button("Logout"):
+        st.session_state.logged_in = False
+        st.session_state.page = "Home"
+        st.experimental_set_query_params(page="Home")
+        st.success("You have been logged out.")
+        st.experimental_rerun()
+
     st.markdown("</div>", unsafe_allow_html=True)
-    return st.session_state.get("page", "Home")
 
+    return st.session_state.get("page", "Home")
 # Emotion capture
 def detect_emotion():
     st.subheader("CAPTURE IMAGE")
