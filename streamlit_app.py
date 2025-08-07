@@ -75,7 +75,7 @@ def play_alert_script():
 def login_form():
     st.markdown("""
         <div style="max-width:600px; margin:40px auto; padding:30px; background:#0f4c75; border-radius:12px; color:white;">
-            <h2 style='text-align: center; margin-bottom:5px;'>🔐 LOGIN</h2>
+            <h1 style='text-align: center; margin-bottom:5px;'>🔐 LOGIN</h1>
             <p style='text-align:center; margin-top:0;'>Enter your name and ID to proceed.</p>
         </div>
     """, unsafe_allow_html=True)
@@ -244,7 +244,7 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller centered pie chart
-        st.markdown("<h4 style='text-align:center;'>Breakdown by Emotion Percentage</h4>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center;'>BREAKDOWN BY EMOTION PERCENTAGE</h3>", unsafe_allow_html=True)
 
         fig, ax = plt.subplots(figsize=(3.5, 3.5))  # smaller size
         labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index]
