@@ -220,7 +220,6 @@ def detect_emotion():
                     </style>
                 """, unsafe_allow_html=True)
 
-# Dashboard
 def show_dashboard():
     st.subheader("📊 EMOTION TREND DASHBOARD")
     if os.path.exists(LOG_PATH):
@@ -237,7 +236,7 @@ def show_dashboard():
         with c2:
             st.metric("Unique Students", df["ID"].nunique() if "ID" in df.columns else 0)
 
-        st.markdown("BREAKDOWN BY EMOTION PERCENTAGE")
+        # Calculate percentages
         total = emotion_counts.sum()
         if total > 0:
             percentages = (emotion_counts / total * 100).round(1)
@@ -245,29 +244,33 @@ def show_dashboard():
             percentages = emotion_counts
 
         # Smaller centered pie chart
-    st.markdown("<h4 style='text-align:center;'>Breakdown by Emotion Percentage</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='text-align:center;'>Breakdown by Emotion Percentage</h4>", unsafe_allow_html=True)
 
-    fig, ax = plt.subplots(figsize=(3.5, 3.5))  # smaller size
-    labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index]
-    wedges, texts, autotexts = ax.pie(
-        emotion_counts.values,
-        labels=None,
-        autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
-        startangle=90,
-        pctdistance=0.7,
-        labeldistance=1.1,
-        wedgeprops={'linewidth': 0.5, 'edgecolor': 'black'}
-    )
-    ax.axis('equal')
-    c1, c2, c3 = st.columns([1, 2, 1])
-    with c2:
-        ax.legend(wedges, labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="small", frameon=True)
-        st.pyplot(fig)
+        fig, ax = plt.subplots(figsize=(3.5, 3.5))  # smaller size
+        labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index]
+        wedges, texts, autotexts = ax.pie(
+            emotion_counts.values,
+            labels=None,
+            autopct=lambda p: f'{p:.1f}%' if p > 0 else '',
+            startangle=90,
+            pctdistance=0.7,
+            labeldistance=1.1,
+            wedgeprops={'linewidth': 0.5, 'edgecolor': 'black'}
+        )
+        ax.axis('equal')
+
+        # Center chart in middle column
+        c1, c2, c3 = st.columns([1, 2, 1])
+        with c2:
+            ax.legend(wedges, labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="small", frameon=True)
+            st.pyplot(fig)
+
+        # CSV download
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button("Download Full CSV Log", data=csv, file_name='emotion_log.csv', mime='text/csv')
+
     else:
         st.info("No data yet. Capture emotions first.")
-
 # Data log
 def show_log():
     st.subheader("EMOTION DETECTION LOG")
