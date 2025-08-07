@@ -107,13 +107,14 @@ def nav_bar():
             padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
             border-radius: 8px;
             margin-bottom:10px;
         }
         .taskbar .title {
             font-size: 20px;
             font-weight: bold;
+            gap: 10px;
             color: white;
             margin-right: auto;
         }
