@@ -107,7 +107,7 @@ def nav_bar():
             padding: 8px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             border-radius: 8px;
             margin-bottom:10px;
         }
@@ -136,7 +136,7 @@ def nav_bar():
         </style>
     """, unsafe_allow_html=True)
 
-    cols = st.columns([1, 0.5, 0.5, 0.5, 0.5, 0.5])
+    cols = st.columns([1, 0.7, 0.7, 0.7, 0.7, 0.7])
     with cols[0]:
         st.markdown("<div class='taskbar'><div class='title'>🎓VIRTUAL EMODASH</div>", unsafe_allow_html=True)
 
