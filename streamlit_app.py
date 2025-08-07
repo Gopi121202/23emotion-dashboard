@@ -256,7 +256,7 @@ def show_dashboard():
         )
         ax.axis('equal')
         legend_labels = [f"{emo}: {percentages[emo]}%" for emo in emotion_counts.index if emotion_counts[emo] > 0]
-        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=True)
+        ax.legend(wedges, legend_labels, title="Emotions", loc="center left", bbox_to_anchor=(1.1, 0.5), fontsize="x-small", frameon=False)
         st.pyplot(fig)
 
         csv = df.to_csv(index=False).encode('utf-8')
